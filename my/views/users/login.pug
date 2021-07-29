@@ -1,0 +1,14 @@
+extends ../layout 
+block content
+    form(action="/users/login", method="post") 
+        p
+            label(for="login") Логин
+        p
+            input#name(type="text", name="login")
+        p 
+            label(for="password") Пароль
+        p
+            input#password(type="password", name="password")
+        p
+            button(type="submit") Вход
+

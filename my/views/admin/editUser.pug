@@ -1,0 +1,33 @@
+extends adminLayout 
+
+block content
+  form(action="/admin/user/edit/"+userInfo.login, method="post") 
+        p
+            label(for="login") Логин
+        p
+            input#login(type="text", name="login", value=userInfo.login)
+        p 
+            label(for="password") Пароль
+        p
+            input#password(type="password", name="password")
+        p 
+            label(for="name") Имя
+        p
+            input#name(type="text", name="name", value=userInfo.name)
+        p 
+            label(for="surname") Фамилия
+        p 
+            input#surname(type="text", name="surname", value=userInfo.surname)  
+        p 
+            label(for="role_id") Идентификатор роли
+        p 
+            select
+              if userInfo.role_id == 1
+                option(value="1", checked) Администратор
+                option(value="2") Оператор
+              else if userInfo.role_id == 2
+                option(value="1") Администратор
+                option(value="2", checked) Оператор
+        p
+            input(type="submit", value="Редактировать пользователя")
+

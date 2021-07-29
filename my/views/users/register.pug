@@ -1,0 +1,26 @@
+extends ../layout 
+block content
+    form(action="/users/register", method="post") 
+        p
+            label(for="login") Логин
+        p
+            input#login(type="text", name="login")
+        p 
+            label(for="password") Пароль
+        p
+            input#password(type="password", name="password")
+        p 
+            label(for="passwordConfirm") Пароль
+        p
+            input#passwordConfirm(type="password", name="passwordConfirm")
+        p 
+            label(for="name") Имя
+        p
+            input#name(type="text", name="name")
+        p 
+            label(for="surname") Фамилия
+        p 
+            input#surname(type="text", name="surname")  
+        p
+            input(type="submit", value="Зарегистрироваться")
+

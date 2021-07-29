@@ -1,0 +1,17 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/style.css')
+    script(src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous")
+    script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
+  body
+    // Здесь нужно будет указать новый скрипт для проверки пользователя на админа
+    script(src="/javascripts/clientAdminAuthCheck.js") 
+    
+    // a(href="/") Главная
+    // a(href="/admin/user/create") Создать пользователя
+    // a(href="/admin/test/create") Создать тест
+    // a(href="/admin/search/") Поиск
+    // a(href="/users/logout") Выйти  
+    block content

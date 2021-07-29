@@ -1,0 +1,33 @@
+extends adminLayout 
+
+block content
+  form(action="/admin/user/create", method="post") 
+        p
+            label(for="login") Логин
+        p
+            input#login(type="text", name="login")
+        p 
+            label(for="password") Пароль
+        p
+            input#password(type="password", name="password")
+        p 
+            label(for="passwordConfirm") Пароль
+        p
+            input#passwordConfirm(type="password", name="passwordConfirm")
+        p 
+            label(for="name") Имя
+        p
+            input#name(type="text", name="name")
+        p 
+            label(for="surname") Фамилия
+        p 
+            input#surname(type="text", name="surname")  
+        p 
+            label(for="role_id") Идентификатор роли
+        p 
+            select
+              option(value="1") Администратор
+              option(value="2") Оператор
+        p
+            input(type="submit", value="Создать пользователя")
+

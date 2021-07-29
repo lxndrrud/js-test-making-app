@@ -1,0 +1,39 @@
+version: '3'
+services:
+
+    basic-node:
+        container_name: basic-node
+        build: 
+            context: .
+            dockerfile: .Dockerfile
+        restart: unless-stopped
+        depends_on:
+            - db
+        ports:
+            - '80:8080'
+        networks:
+            - basic_network
+        links:
+            - db
+        environment:
+            DB_HOST: db-basic
+        volumes:
+            - .:/var/www/basicNode
+    
+    db:
+        image: mysql:8.0.25
+        restart: unless-stopped
+        container_name: db-basic
+        networks:
+            - basic_network
+        environment:
+            MYSQL_ROOT_PASSWORD: root_pass
+            MYSQL_PASSWORD: mysql_pass
+            MYSQL_USER: dbbasic
+            MYSQL_DATABASE: mydb
+        volumes:
+            - ./db:/var/lib/mysql
+
+networks:
+    basic_network:
+        external: False

@@ -1,0 +1,9 @@
+extends ../layout 
+block content
+    h2 Созданнные тесты
+        ul
+            each test in testList
+                li 
+                    a(href="/test/"+test.id) Тест #{test.id}
+                
+

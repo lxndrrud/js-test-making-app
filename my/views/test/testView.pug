@@ -1,0 +1,17 @@
+extends ../layout
+
+block content 
+  ul
+    each question in questionsList
+      li 
+        p= question.question_text
+        if question.question_type == 'text'
+          p Текстовый вопрос
+          p= question.question_text_answer
+        else if question.question_type == 'test'
+          p Тестовый вопрос
+          each val in question.question_test_answers
+            if val.test_answer_is_correct
+              p #{val.test_answer_text} - Правильный ответ
+            else
+              p #{val.test_answer_text}

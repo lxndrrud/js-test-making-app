@@ -1,0 +1,50 @@
+extends adminLayout 
+block content 
+  form(method="post", id="query", name='query')
+    p
+      label(for="login") Логин пользователя
+    p   
+      input#login(type="text", name="login")  
+    p 
+      label(for="test_id") Идентификатор теста 
+    p 
+      input#test_id(type="text", name="test_id")
+    p 
+      input(type="submit", value="Принять")
+  div(id="search_container")
+
+
+
+  script.
+    $(async function() {
+      $( "#query" ).submit(async function( event ) {
+
+        event.preventDefault();
+        var form = document.forms.query;
+
+        var formData = {
+          login: form.elements.login.value,
+          test_id: form.elements.test_id.value
+        }
+
+        $('#search_container').html('');
+        await axios.post('http://localhost/admin/search/tests', formData)
+          .then(resp => {
+              for(let i = 0; i < resp.data.tests.length; i++) 
+                $('#search_container').append(
+                  `<p>
+                    <a href="/test/${resp.data.tests[i].id}">
+                      Тест #${resp.data.tests[i].id}
+                    </a>
+                    <a href="/admin/test/edit/${resp.data.tests[i].id}">
+                      Редактировать
+                    </a>
+                    <a href="/admin/test/delete/${resp.data.tests[i].id}">
+                      Удалить
+                    </a>
+                  </p>`);
+              
+          })
+       
+      });
+    })

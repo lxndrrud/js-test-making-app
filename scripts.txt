@@ -1,0 +1,29 @@
+// Создать миграцию (в конце указать желаемое имя файла)
+sudo docker exec -it basic-node npx knex migrate:make %name%
+
+// Внести последние невнесенные файлы миграции в бд
+sudo docker exec -it basic-node npx knex migrate:latest
+
+// Внести указанный файл миграции в бд
+sudo docker exec -it basic-node npx knex migrate:up %file%
+
+// Откатить указанный файл миграции из бд
+sudo docker exec -it basic-node npx knex migrate:down %file%
+
+// Откатить бд до состояния без последней миграции
+sudo docker exec -it basic-node npx knex migrate:rollback
+
+// Создать файл для заполнения бд записями
+sudo docker exec -it basic-node npx knex seed:make %name%
+
+// Выполнить файлы seed
+sudo docker exec -it basic-node npx knex seed:run
+
+// Выполнить конкретный seed файл
+sudo docker exec -it basic-node npx knex seed:run --specific=%file%
+
+// Подключиться к терминалу бд, используя root-пароль
+sudo docker exec -it db-basic mysql -p
+
+// Подключиться к терминалу бд, используя MYSQL_USER и MYSQL_PASSWORD
+sudo docker exec -it db-basic mysql -u dbbasic -p

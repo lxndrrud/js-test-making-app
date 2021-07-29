@@ -1,0 +1,54 @@
+extends adminLayout 
+block content
+  form(method="post", id='query', name="query")
+    p 
+      label(for="login") Логин пользователя
+    p   
+      input#login(type="text", name="login")  
+    p 
+      label(for="name") Имя пользователя
+    p 
+      input#name(type="text", name="name")
+    p 
+      label(for="surname") Фамилия пользователя
+    p 
+      input#surname(type="text", name="surname")
+    p 
+      input(type="submit", value="Принять")
+  div(id="search_container")
+
+  script.
+
+    $(async function() {
+      console.log('hello');
+      $( '#query' ).submit(async function( event)  {
+        event.preventDefault();
+        var form = document.forms.query;
+
+        var formData = {
+          login: form.elements.login.value,
+          name: form.elements.name.value,
+          surname: form.elements.surname.value
+        }
+        $('#search_container').html('');
+        await axios.post('http://localhost/admin/search/users', formData)
+          .then(resp => {
+              for(let i = 0; i < resp.data.users.length; i++) 
+                $('#search_container').append(
+                  `<p>
+                    <span>
+                      ${resp.data.users[i].login} - ${resp.data.users[i].name} ${resp.data.users[i].surname}
+                    </span>
+                    <a href="/admin/user/edit/${resp.data.users[i].login}">
+                      Редактировать
+                    </a>
+                    <a href="/admin/user/delete/${resp.data.users[i].login}">
+                      Удалить
+                    </a>
+                  </p>`);
+              
+          })
+
+      })
+
+    })
