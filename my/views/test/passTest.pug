@@ -1,0 +1,27 @@
+extends ../layout
+block append head 
+  script(src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous")
+  script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
+block content 
+  form(action="/test/pass/"+test.id, method="post") 
+    ul
+      each question in test.content
+        li= question.question_text
+          if question.question_type == 'text'
+            p
+              input#text_answer(type="text", name="text_answer"+test.id, placeholder='Текстовый ответ')
+          else if question.question_type == 'test'
+            each test_answer in question.question_test_answers
+              p
+                //li= test_answer.test_answer_text
+                input#checkbox(type="checkbox", name="checkbox_" + question.question_id + '_' + test_answer.test_answer_id)
+                span= test_answer.test_answer_text
+    input(type="submit", value="Отправить") 
+    
+                
+    
+
+
+      
+
+    

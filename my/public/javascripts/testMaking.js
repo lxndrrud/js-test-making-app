@@ -17,7 +17,7 @@ var kek = async function(event) {
   */
   if (formData){
     event.preventDefault();
-    await axios.post('http://localhost/test', formData);
+    await axios.post('http://localhost/test/make', formData);
     window.location = '/';
   }
   
@@ -29,7 +29,7 @@ var counters = {
     "testAnswers": {}
 };
 form.setAttribute('method',"post");
-form.setAttribute('action',"/test");
+form.setAttribute('action',"/test/make");
 
 
 function getCounterAndIncrement(query, subquery){

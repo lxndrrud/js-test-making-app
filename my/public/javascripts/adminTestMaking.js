@@ -19,7 +19,7 @@ var kek = async function(event) {
   if (questionsFormArray){
     event.preventDefault();
     await axios.post('http://localhost/admin/test/create', {
-      creator: creator,
+      creator: creatorInput.value,
       questionsFormArray: questionsFormArray
     });
     window.location = '../';
@@ -63,7 +63,7 @@ function questionTypeChanged(selector){
   const containerNumber = parseInt(selector.id.match(/[0-9]+/)[0], 10);
   var containerElement = document.getElementById("container" + containerNumber);
   var paragraphElement = containerElement.lastChild;
-  var formDataElement = formData.find(item => item.question_id === containerNumber);
+  var formDataElement = questionsFormArray.find(item => item.question_id === containerNumber);
   
   switch(selector.options[selector.selectedIndex].text){
       case "Вопрос с текстовым ответом":
@@ -145,7 +145,7 @@ function questionTypeChanged(selector){
               btnDeleteTestAnswer.value = "Удалить вариант ответа";
               btnDeleteTestAnswer.onclick = () => {
                   paragraphElement.removeChild(answerParagraphElement);
-                  formData.question_test_answers = formData.question_test_answers.filter(
+                  questionsFormArray.question_test_answers = questionsFormArray.question_test_answers.filter(
                     item => item.test_answer_id !== questionTestAnswersCounter
                   );
               }
@@ -165,6 +165,7 @@ var btnAddQuestion = document.createElement("input");
 btnAddQuestion.type = "button";
 btnAddQuestion.value = "Добавить вопрос";
 btnAddQuestion.onclick = () => {
+  console.log('asdasdasd');
 
 
   var questionsCounter = getCounterAndIncrement("questions");
@@ -181,7 +182,7 @@ btnAddQuestion.onclick = () => {
     question_test_answers: []
   };
 
-  formData.push(QUESTION_ELEMENT);
+  questionsFormArray.push(QUESTION_ELEMENT);
 
   //create selector element
   var questionTypeSelector = document.createElement("select");
@@ -208,7 +209,7 @@ btnAddQuestion.onclick = () => {
   questionText.id = "question" + questionsCounter;
   questionText.placeholder = "Введите текст вопроса";
   questionText.onchange = (e) => {
-    formData.find(item => item.question_id === questionsCounter).question_text = questionText.value;
+    questionsFormArray.find(item => item.question_id === questionsCounter).question_text = questionText.value;
     // console.log(questionText.value);
     e.preventDefault();
   }
@@ -221,7 +222,7 @@ btnAddQuestion.onclick = () => {
   btnDeleteQuestion.id = "deleteButton" + questionsCounter;
   btnDeleteQuestion.onclick = () => {
       form.removeChild(containerElement);
-      formData = formData.filter(item => item.question_id !== questionsCounter);
+      questionsFormArray = questionsFormArray.filter(item => item.question_id !== questionsCounter);
   }
 
    
@@ -246,7 +247,13 @@ var submitButton = document.createElement('input');
 submitButton.type = 'submit';
 submitButton.value = 'Принять';
 
+var creatorInput = document.createElement('input');
+creatorInput.type = 'text';
+creatorInput.placeholder = 'Логин автора';
+creatorInput.required = true;
+creatorInput.id = 'creator';
 
+form.appendChild(creatorInput);
 form.appendChild(btnAddQuestion);
 form.appendChild(submitButton);
 

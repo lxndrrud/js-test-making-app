@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
+const checkPermissions = require('../middleware/permissionCheck');
 const mydb = require('../dbHelpers');
 
 
@@ -21,7 +22,7 @@ router.post('/make', auth, async function(req, res, next) {
 router.get('/find/:login', auth, async function(req, res, next) {
     console.log(req.params.login);
     console.log(req.cookies['LOGIN']);
-    if (req.params.login === req.cookies['LOGIN']){
+    if (req.params.login === req.cookies['LOGIN'] || req.signedCookies['ROLE' === 'Administrator']){
         testList = await mydb.getTestsByUserLogin(req.cookies['LOGIN']);
         console.log(testList);
         res.render('test/userTests', {testList: testList, login: req.cookies['LOGIN']});
@@ -49,5 +50,54 @@ router.get('/:test_id', auth, async function(req, res, next){
     }
     
 });
+
+router.get('/delete/:test_id', auth, async function(req, res, next){
+    var test = (await mydb.getTestById(req.params.test_id))[0];
+    console.log(test);
+    if (!test || test.creator_login !== req.cookies['LOGIN']){
+        res.redirect('../');
+    }
+    else{
+        res.render('test/deleteTest', {test: test});
+  }
+});
+
+router.post('/delete/:test_id', auth, async function(req, res, next){
+    await mydb.deleteTest(req.params.test_id);
+    res.redirect('/find/'+req.cookies['LOGIN']);
+});
+
+router.get('/pass/:test_id', auth, async function(req, res, next){
+    var test = (await mydb.getTestById(req.params.test_id))[0];
+    console.log(test);
+    console.log(test.content);
+    if (!test){
+        res.redirect('../');
+    }
+    else{
+        res.render('test/passTest', {test: test})
+    }
+});
+
+function parseForm(form){
+    console.log(form);
+    return 123;
+}
+
+router.post('/pass/:test_id', auth, async function(req, res, next){
+    var form = req.body;
+    var test = (await mydb.getTestById(req.params.test_id))[0];
+    console.log(test);
+
+    var result_points = parseForm(form);
+    const result = {
+        examinee_login: req.cookies['LOGIN'],
+        test_id: req.params.test_id, 
+        result_points: result_points
+    }
+    //await mydb.createResult(result);
+    //res.redirect('../');
+});
+
 
 module.exports = router;

@@ -15,7 +15,7 @@ const verifyToken = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, config.TOKEN_SECRET);
     console.log(decoded);
-    if (decoded.role_id !== 1){
+    if (decoded.role_title !== 'Administrator'){
       return res.render('authFail');
     }
   } catch (err) {

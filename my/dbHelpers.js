@@ -82,6 +82,18 @@ async function deleteTest(test_id){
     .del();
 }
 
+async function getRolePermissions(role_title){
+    return await db('roles')
+    .select('permissions')
+    .where({
+        title: role_title
+    });
+}
+
+async function createResult(result){
+    return await db.insert(result).into('results');
+}
+
 module.exports = {
     registerUser, 
     checkUser,
@@ -94,5 +106,7 @@ module.exports = {
     getTestById,
     createTest,
     editTest,
-    deleteTest
+    deleteTest,
+    getRolePermissions,
+    createResult
 };

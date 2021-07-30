@@ -37,7 +37,7 @@ router.post('/register/', async function(req, res, next){
         password: await bcrypt.hash(data.password, 7),
         name: data.name,
         surname: data.surname,
-        role_id: 2
+        role_title: 'Operator'
       };
       var returnValue = await mydb.registerUser(newUser);
       console.log(returnValue);
@@ -67,7 +67,7 @@ router.post('/login/', async function(req, res, next){
     console.log(user);
     var userDB = (await mydb.checkUser(user.login))[0];
     if (userDB && await bcrypt.compare(user.password, userDB.password)){
-      const token = generateAccessToken(user.login, userDB.role_id);
+      const token = generateAccessToken(user.login, userDB.role_title);
       //res.setHeader('TOKEN', token);
       let signedOptions = {
         maxAge: 1000 * 60 * 60 *4 , // would expire after 4 hours
@@ -83,6 +83,7 @@ router.post('/login/', async function(req, res, next){
 
       // Set cookie
       res.cookie('LOGIN', user.login, unsignedOptions);
+      res.cookie('ROLE', userDB.role_title, signedOptions);
       res.cookie('TOKEN', token, signedOptions); // options is optional
       res.redirect('../');
     }
@@ -99,14 +100,15 @@ router.get('/logout/', auth, function(req, res, next){
   if (req.signedCookies['TOKEN']){
     res.clearCookie('TOKEN');
     res.clearCookie('LOGIN');
+    res.clearCookie('ROLE');
   }
   res.redirect('../../');
 });
 
-function generateAccessToken(login, role_id) {
+function generateAccessToken(login, role_title) {
   return jwt.sign({
     login: login,
-    role_id: role_id
+    role_title: role_title
   }, process.env.TOKEN_SECRET, { expiresIn: '4h' });
 }
 

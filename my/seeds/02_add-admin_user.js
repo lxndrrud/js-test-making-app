@@ -10,7 +10,7 @@ exports.seed = function(knex) {
         password: bcrypt.hashSync('12345', 7),
         name: 'Alexander',
         surname: 'Rud',
-        role_id: 1
+        role_title: 'Administrator'
       }).into('users');
     });
 };

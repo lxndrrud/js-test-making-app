@@ -22,12 +22,12 @@ block content
             label(for="role_id") Идентификатор роли
         p 
             select
-              if userInfo.role_id == 1
-                option(value="1", checked) Администратор
-                option(value="2") Оператор
-              else if userInfo.role_id == 2
-                option(value="1") Администратор
-                option(value="2", checked) Оператор
+              if userInfo.role_title == 'Administrator'
+                option(value="Administrator", checked) Администратор
+                option(value="Operator") Оператор
+              else if userInfo.role_id == 'Operator'
+                option(value="Administrator") Администратор
+                option(value="Operator", checked) Оператор
         p
             input(type="submit", value="Редактировать пользователя")
 
