@@ -1,0 +1,5 @@
+extends adminLayout 
+block content 
+  h3 Вы действительно хотите удалить результат ##{result.id}?
+  form(action="/admin/result/delete/"+result.id, method="post") 
+    input(type="submit", value="Подтвердить")

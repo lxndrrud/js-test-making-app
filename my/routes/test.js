@@ -32,6 +32,11 @@ router.get('/find/:login', auth, async function(req, res, next) {
     }
 });
 
+router.get('/results', auth, async function(req, res, next){
+    const results = await mydb.getResultsByLogin(req.cookies['LOGIN']);
+    res.render('test/userTestsResults', {results: results});
+});
+
 router.get('/:test_id', auth, async function(req, res, next){
     const testInfo = (await mydb.getTestById(req.params.test_id))[0];
 
@@ -69,8 +74,6 @@ router.post('/delete/:test_id', auth, async function(req, res, next){
 
 router.get('/pass/:test_id', auth, async function(req, res, next){
     var test = (await mydb.getTestById(req.params.test_id))[0];
-    console.log(test);
-    console.log(test.content);
     if (!test){
         res.redirect('../');
     }
@@ -79,25 +82,56 @@ router.get('/pass/:test_id', auth, async function(req, res, next){
     }
 });
 
-function parseForm(form){
-    console.log(form);
-    return 123;
+function parseForm(form, test){
+    let pointsCounter = 0;
+    for (let question of test.content){
+        if (question.question_type === 'text'){
+            if (form['text_answer_' + question.question_id]===question.question_text_answer){
+                // Если добавится функция баллов за вопрос, то зддсс нужно поменять
+                pointsCounter += 1;
+            }
+        }
+        else if (question.question_type === 'test'){
+            let isCorrectArray = [];
+            for (let test_answer of question.question_test_answers){
+                if (form[`checkbox_${question.question_id}_${test_answer.test_answer_id}`] 
+                    && test_answer.test_answer_is_correct){
+                    isCorrectArray.push(true);
+                }
+                else if (
+                (form[`checkbox_${question.question_id}_${test_answer.test_answer_id}`] 
+                && !test_answer.test_answer_is_correct)
+                || 
+                (!form[`checkbox_${question.question_id}_${test_answer.test_answer_id}`] 
+                && test_answer.test_answer_is_correct)){
+                    isCorrectArray.push(false);
+                }
+            }
+            if (!isCorrectArray.includes(false)){
+                // Если добавится функция баллов за вопрос, то зддсс нужно поменять
+                pointsCounter += 1;
+            }
+        }
+        
+    }
+    return pointsCounter;
 }
 
 router.post('/pass/:test_id', auth, async function(req, res, next){
     var form = req.body;
     var test = (await mydb.getTestById(req.params.test_id))[0];
-    console.log(test);
 
-    var result_points = parseForm(form);
+    var result_points = parseForm(form, test);
     const result = {
         examinee_login: req.cookies['LOGIN'],
         test_id: req.params.test_id, 
         result_points: result_points
     }
-    //await mydb.createResult(result);
-    //res.redirect('../');
+    await mydb.createResult(result);
+    res.redirect('/');
 });
+
+
 
 
 module.exports = router;

@@ -29,6 +29,11 @@ if (getCookie('TOKEN')){
     userTestsButton.innerText='Мои тесты';
     body.appendChild(userTestsButton);
 
+    var userTestResultsButton = document.createElement("a");
+    userTestResultsButton.href='/test/results';
+    userTestResultsButton.innerText='Мои результаты';
+    body.appendChild(userTestResultsButton);
+
     var logoutButton = document.createElement("a");
     logoutButton.href='/users/logout/';
     logoutButton.innerText='Выйти';

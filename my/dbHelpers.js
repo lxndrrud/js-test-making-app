@@ -94,6 +94,47 @@ async function createResult(result){
     return await db.insert(result).into('results');
 }
 
+async function getResultsByLogin(login){
+    return await db('results').select()
+    .where({
+        examinee_login: login
+    });
+}
+
+async function getResultsByTestId(test_id){
+    return await db('results').select()
+    .where({
+        test_id: test_id
+    });
+}
+
+async function getResultByResultId(result_id){
+    return await db('results').select()
+    .where({
+        id: result_id
+    });
+}
+
+async function getResultsByQuery(query){
+    return await db('results').select().where(query);
+}
+
+async function editResult(resultInfo, result_id){
+    return await db('results')
+    .where({
+        id: result_id
+    })
+    .update(resultInfo);
+}
+
+async function deleteResult(result_id){
+    return await db('results')
+    .where({
+        id: result_id
+    })
+    .del();
+}
+
 module.exports = {
     registerUser, 
     checkUser,
@@ -108,5 +149,11 @@ module.exports = {
     editTest,
     deleteTest,
     getRolePermissions,
-    createResult
+    createResult,
+    getResultsByLogin,
+    getResultsByTestId,
+    getResultsByQuery,
+    getResultByResultId,
+    editResult,
+    deleteResult
 };

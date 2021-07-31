@@ -35,6 +35,10 @@ if (getCookie('TOKEN')){
   testCreateButton.innerText='Cоздать тест';
   body.appendChild(testCreateButton);
 
+  var resultCreateButton = document.createElement("a");
+  resultCreateButton.href='/admin/result/create';
+  resultCreateButton.innerText='Cоздать результат';
+  body.appendChild(resultCreateButton);
 
   var searchButton = document.createElement("a");
   searchButton.href='/admin/search/';

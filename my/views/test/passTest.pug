@@ -9,7 +9,7 @@ block content
         li= question.question_text
           if question.question_type == 'text'
             p
-              input#text_answer(type="text", name="text_answer"+test.id, placeholder='Текстовый ответ')
+              input#text_answer(type="text", name="text_answer_"+question.question_id, placeholder='Текстовый ответ')
           else if question.question_type == 'test'
             each test_answer in question.question_test_answers
               p

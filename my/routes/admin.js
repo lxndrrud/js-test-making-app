@@ -23,7 +23,7 @@ router.post('/user/create', adminAuth, async function(req, res, next){
       passwordConfirm: form.passwordConfirm,
       name: form.name,
       surname: form.surname,
-      role_id: form.role_id
+      role_title: form.role_title
     };
     var checkArray = await mydb.checkUser(data.login);
     if (checkArray[0]){
@@ -39,7 +39,7 @@ router.post('/user/create', adminAuth, async function(req, res, next){
       };
       var returnValue = await mydb.registerUser(newUser);
       console.log(returnValue);
-      res.redirect('./');
+      res.redirect('/admin');
     }
     else{
       res.redirect('./user/create');
@@ -57,11 +57,11 @@ router.get('/user/edit/:login', adminAuth, async function(req,res, next){
         res.render('admin/editUser', {userInfo: userInfo[0]});
       }
       else{
-        res.redirect('/');
+        res.redirect('/admin');
       }
     }
     else{
-      res.redirect('/');
+      res.redirect('/admin');
     }
   } catch(err){
     console.log(err);
@@ -76,10 +76,10 @@ router.post('/user/edit/:login', adminAuth, async function(req, res, next){
       password: await bcrypt.hash(form.password, 7),
       name: form.name,
       surname: form.surname,
-      role_id: form.role_id
+      role_title: form.role_title
     };
     await mydb.editUser(data, req.params.login);
-    res.redirect('/');
+    res.redirect('/admin');
   } catch(err){
     console.log(err);
   }
@@ -89,7 +89,7 @@ router.get('/user/delete/:login', adminAuth, async function(req, res, next){
   var user = (await mydb.getUserInfoByLogin(req.params.login))[0];
   console.log(user);
   if (!user){
-    res.redirect('/');
+    res.redirect('/admin');
   }
   else{
     res.render('admin/deleteUser', {user: user});
@@ -98,7 +98,7 @@ router.get('/user/delete/:login', adminAuth, async function(req, res, next){
 
 router.post('/user/delete/:login', adminAuth, async function(req, res, next){
   await mydb.deleteUser(req.params.login);
-  res.redirect('/');
+  res.redirect('/admin');
 });
 
 router.get('/test/create', adminAuth, function(req, res, next) {
@@ -114,14 +114,14 @@ router.post('/test/create', adminAuth, async function(req, res, next) {
   };
   await mydb.createTest(newTest);
 
-  res.redirect('/');
+  res.redirect('/admin');
 });
 
 router.get('/test/delete/:test_id', adminAuth, async function(req, res, next){
   var test = (await mydb.getTestById(req.params.test_id))[0];
   console.log(test);
   if (!test){
-    res.redirect('/');
+    res.redirect('/admin');
   }
   else{
     res.render('admin/deleteTest', {test: test});
@@ -131,6 +131,56 @@ router.get('/test/delete/:test_id', adminAuth, async function(req, res, next){
 router.post('/test/delete/:test_id', adminAuth, async function(req, res, next){
   await mydb.deleteTest(req.params.test_id);
   res.redirect('/');
+});
+
+router.get('/result/edit/:result_id', adminAuth, async function(req,res, next){
+  try{
+    if (req.params.result_id){
+      var resultInfo = await mydb.getResultByResultId(req.params.result_id);
+      if (resultInfo){
+        res.render('admin/editResult', {resultInfo: resultInfo[0]});
+      }
+      else{
+        res.redirect('/admin');
+      }
+    }
+    else{
+      res.redirect('/admin');
+    }
+  } catch(err){
+    console.log(err);
+  }
+});
+
+router.post('/result/edit/:result_id', adminAuth, async function(req, res, next){
+  try{
+    form = req.body;
+    var data = {
+      examinee_login: form.examinee_login,
+      test_id: form.test_id,
+      result_points: form.result_points
+    };
+    await mydb.editResult(data, req.params.result_id);
+    res.redirect('/admin');
+  } catch(err){
+    console.log(err);
+  }
+});
+
+router.get('/result/delete/:result_id', adminAuth, async function(req, res, next){
+  var result = (await mydb.getResultByResultId(req.params.result_id))[0];
+  console.log(result);
+  if (!result){
+    res.redirect('/admin');
+  }
+  else{
+    res.render('admin/deleteResult', {result: result});
+  }
+});
+
+router.post('/result/delete/:result_id', adminAuth, async function(req, res, next){
+  await mydb.deleteResult(req.params.result_id);
+  res.redirect('/admin');
 });
 
 router.get('/search', adminAuth, function(req, res, next){
@@ -191,6 +241,30 @@ router.post('/search/users', adminAuth, async function(req, res, next){
     users: users
   }
 
+  res.status(200).send(context);
+});
+
+router.get('/search/results/', adminAuth, async function(req, res, next){
+  res.render('admin/searchResults', {});
+})
+
+router.post('/search/results/', adminAuth, async function(req, res, next){
+  var form = req.body;
+  var results = [];
+  var context = {};
+  var query = {};
+  if (form.login){
+    query.examinee_login = form.login
+  }
+  if (form.test_id){
+    query.test_id = form.test_id
+  }
+  
+  results = await mydb.getResultsByQuery(query);
+
+  context = {
+    results: results
+  }
   res.status(200).send(context);
 });
 

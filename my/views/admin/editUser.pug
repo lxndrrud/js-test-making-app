@@ -19,13 +19,13 @@ block content
         p 
             input#surname(type="text", name="surname", value=userInfo.surname)  
         p 
-            label(for="role_id") Идентификатор роли
+            label(for="role_title") Идентификатор роли
         p 
             select
               if userInfo.role_title == 'Administrator'
                 option(value="Administrator", checked) Администратор
                 option(value="Operator") Оператор
-              else if userInfo.role_id == 'Operator'
+              else if userInfo.role_title == 'Operator'
                 option(value="Administrator") Администратор
                 option(value="Operator", checked) Оператор
         p

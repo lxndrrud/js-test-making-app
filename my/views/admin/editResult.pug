@@ -1,0 +1,19 @@
+extends adminLayout 
+
+block content
+  form(action="/admin/result/edit/"+resultInfo.id, method="post") 
+        p
+            label(for="examinee_login") Логин
+        p
+            input#examinee_login(type="text", name="examinee_login", value=resultInfo.examinee_login)
+        p 
+            label(for="test_id") Идентификатор теста
+        p
+            input#test_id(type="number", name="test_id", value=resultInfo.test_id)
+        p 
+            label(for="result_points") Количество баллов
+        p 
+            input#result_points(type="number", name="result_points", value=resultInfo.result_points) 
+        p
+            input(type="submit", value="Редактировать результат")
+
