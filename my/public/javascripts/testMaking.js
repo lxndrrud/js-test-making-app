@@ -63,7 +63,7 @@ function questionTypeChanged(selector){
     var formDataElement = formData.find(item => item.question_id === containerNumber);
     
     switch(selector.options[selector.selectedIndex].text){
-        case "Вопрос с текстовым ответом":
+        case "Текстовый вопрос":
             paragraphErase(paragraphElement);
             var questionAnswer = document.createElement("input");
             questionAnswer.type = "text";
@@ -80,7 +80,7 @@ function questionTypeChanged(selector){
               e.preventDefault();
             }
             break;
-        case "Вопрос с вариантами ответа":
+        case "Тестовый вопрос":
             paragraphErase(paragraphElement);
 
             formDataElement.question_type = 'test';
@@ -185,12 +185,12 @@ btnAddQuestion.onclick = () => {
     questionTypeSelector.setAttribute("onchange", 'questionTypeChanged(this)');
     questionTypeSelector.name = "selector";
     questionTypeSelector.id = "selector" + questionsCounter;
-    var testQuestionOption = document.createElement("option");
-    testQuestionOption.text = "Вопрос с текстовым ответом";
-    testQuestionOption.value = "Вопрос с текстовым ответом";
     var textQuestionOption = document.createElement("option");
-    textQuestionOption.text = "Вопрос с вариантами ответа";
-    textQuestionOption.value = "Вопрос с вариантами ответа";
+    textQuestionOption.text = "Текстовый вопрос";
+    textQuestionOption.value = "Текстовый вопрос";
+    var testQuestionOption = document.createElement("option");
+    testQuestionOption.text = "Тестовый вопрос";
+    testQuestionOption.value = "Тестовый вопрос";
     questionTypeSelector.appendChild(testQuestionOption); 
     questionTypeSelector.appendChild(textQuestionOption);
     

@@ -117,6 +117,50 @@ router.post('/test/create', adminAuth, async function(req, res, next) {
   res.redirect('/admin');
 });
 
+router.get('/test/edit/:test_id', adminAuth, async function(req, res, next){
+  try{
+    if (req.params.test_id){
+      var test = (await mydb.getTestById(req.params.test_id))[0];
+      console.log(test);
+      if (!test){
+        res.redirect('/admin');
+      }
+      else{
+        res.render('admin/editTest', {test: test});
+      }
+    }
+    else{
+      res.redirect('/admin');
+    }
+  } catch(err){
+    console.log(err);
+  }
+});
+
+router.post('/test/edit/:test_id', adminAuth, async function(req, res, next){
+  try{
+    form = req.body;
+    if (req.params.test_id){
+      await mydb.editTest(form, req.params.test_id);
+    }
+    res.redirect('/admin');
+  } catch(err){
+    console.log(err);
+  }
+});
+
+/*
+router.get('/test/get/:test_id', adminAuth, async function(req, res, next){
+  var test = await mydb.getTestById(req.params.test_id);
+  if (!test){
+    res.status(404).send({});
+  }
+  else{
+    res.status(200).send(test);
+  }
+});
+*/
+
 router.get('/test/delete/:test_id', adminAuth, async function(req, res, next){
   var test = (await mydb.getTestById(req.params.test_id))[0];
   console.log(test);
