@@ -43,7 +43,6 @@ block content
     var form = document.getElementsByTagName('form')[0];
     var formData = test.content;
 
-  script.
     for (let question of test.content){
       var selector = document.getElementById('selector'+question.question_id);
       var formDataElement = formData.find(item => item.question_id === question.question_id);
@@ -54,28 +53,23 @@ block content
         e.preventDefault();
       }
       var containerElement = document.getElementById("container" + question.question_id);
-      var paragraphElement = containerElement.lastChild;
+      var paragraphElement = document.getElementById("paragraph" + question.question_id);
       switch(question.question_type){
         case 'test':
-          var answerParagraphElement = document.createElement("p");
-          answerParagraphElement.id = "answerParagraph" + containerNumber + "-" + questionTestAnswersCounter;
-          answerParagraphElement.name = "answerParagraph";
-          answerParagraphElement.classList.add("answerParagraph");
-
           var buttonAddTestAnswer = document.getElementById('buttonAddTestAnswer'+question.question_id);
           buttonAddTestAnswer.onclick = () => {
-            const questionTestAnswersCounter = getCounterAndIncrement('testAnswers', containerNumber.toString());
+            const questionTestAnswersCounter = getCounterAndIncrement('testAnswers', question.question_id);
 
             var answerParagraphElement = document.createElement("p");
-            answerParagraphElement.id = "answerParagraph" + containerNumber + "-" + questionTestAnswersCounter;
-            answerParagraphElement.name = "answerParagraph";
+            answerParagraphElement.id = "answerParagraphElement" + question.question_id + "-" + questionTestAnswersCounter;
+            answerParagraphElement.name = "answerParagraphElement";
             answerParagraphElement.classList.add("answerParagraph");
 
             var questionTestAnswer = document.createElement("input");
             questionTestAnswer.type = "text";
             questionTestAnswer.required = true;
             questionTestAnswer.name = "testAnswer";
-            questionTestAnswer.id = "testAnswer" + containerNumber + "-" + questionTestAnswersCounter;
+            questionTestAnswer.id = "testAnswer" + question.question_id + "-" + questionTestAnswersCounter;
             questionTestAnswer.placeholder = "Введите текст варианта";
 
             TEST_ANSWER_ELEMENT = {
@@ -98,7 +92,7 @@ block content
             checkboxIsCorrectAnswer.type = "checkbox";
             checkboxIsCorrectAnswer.checked = false;
             checkboxIsCorrectAnswer.name = "checkboxTestAnswer";
-            checkboxIsCorrectAnswer.id = "checkboxTestAnswer" + containerNumber + "-" + questionTestAnswersCounter;
+            checkboxIsCorrectAnswer.id = "checkboxTestAnswer" + question.question_id + "-" + questionTestAnswersCounter;
 
             checkboxIsCorrectAnswer.onchange = (e) => {
               // console.log(`questionTestAnswersCounter = ${questionTestAnswersCounter}`);
@@ -109,12 +103,12 @@ block content
             }
 
             var btnDeleteTestAnswer = document.createElement("input");
-            btnDeleteTestAnswer.id = 'buttonDeleteTestAnswer' + containerNumber + "-" + questionTestAnswersCounter;
+            btnDeleteTestAnswer.id = 'buttonDeleteTestAnswer' + question.question_id + "-" + questionTestAnswersCounter;
             btnDeleteTestAnswer.type = "button";
             btnDeleteTestAnswer.value = "Удалить вариант ответа";
             btnDeleteTestAnswer.onclick = () => {
                 paragraphElement.removeChild(answerParagraphElement);
-                formData.question_test_answers = formData.question_test_answers.filter(
+                formDataElement.question_test_answers = formDataElement.question_test_answers.filter(
                   item => item.test_answer_id !== questionTestAnswersCounter
                 );
             }
@@ -126,13 +120,15 @@ block content
             paragraphElement.appendChild(answerParagraphElement);
           }
           for (let testAnswer of question.question_test_answers){
-            
             var buttonDeleteTestAnswer = document.getElementById('buttonDeleteTestAnswer'
               +question.question_id+'_'+testAnswer.test_answer_id);
             buttonDeleteTestAnswer.onclick = () => {
+              let answerParagraphElement = document.getElementById("answerParagraphElement" + question.question_id + '_'+ testAnswer.test_answer_id);
+              console.log(paragraphElement);
+              console.log(paragraphElement.childNodes);
               paragraphElement.removeChild(answerParagraphElement);
-              formData.question_test_answers = formData.question_test_answers.filter(
-                item => item.test_answer_id !== questionTestAnswersCounter
+              formDataElement.question_test_answers = formDataElement.question_test_answers.filter(
+                item => item.test_answer_id !== testAnswer.test_answer_id
               );
             }
           }
@@ -145,13 +141,8 @@ block content
           }
           break;
       }
-      questionAnswer.onchange = (e) => {
-                formDataElement.question_text_answer = questionAnswer.value;
-                e.preventDefault();
-              }
     }
 
-  script.
     function questionTestAnswersParse(test){
       var storage = {}
       for (let question of test.content){
@@ -162,14 +153,6 @@ block content
       return storage
     };
 
-    var test = !{JSON.stringify(test)};
-    var counters = {
-      "questions": test.content.length || 0,
-      "testAnswers": questionTestAnswersParse(test) || {}
-    };
-    console.log(counters);
-    var form = document.getElementsByTagName('form')[0];
-    var formData = test.content;
 
     function getCounterAndIncrement(query, subquery){
       if (subquery === undefined){
@@ -369,8 +352,6 @@ block content
       form.appendChild(containerElement);
     }
 
-
-  script.
     window.onload = function() {
       form.addEventListener('submit', kek, true);
     }
