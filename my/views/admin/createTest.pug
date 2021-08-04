@@ -2,4 +2,168 @@ extends adminLayout
 
 block content 
   h1 Создайте Тест
-  script(src="/javascripts/adminTestMaking.js") 
+
+  form(action="/admin/test/create", method="post", id="myForm")
+    input#creator_login(type="text", name="creator_login", placeholder="Введите логин автора", required)
+    button(id="buttonAddQuestion") Добавить вопрос
+    input(type="submit", value="Принять")
+    div(id='mainContainer')
+
+  script.
+    function questionTestAnswersParse(test){
+      var storage = {}
+      for (let question of test.content){
+        if (question.question_type === 'test'){
+          storage[question.question_id] = question.question_test_answers.length;
+        }
+      }
+      return storage
+    }
+    function getCounterAndIncrement(query, subquery){
+      if (subquery === undefined){
+          counters[query] += 1;
+          return counters[query];
+      }
+      if (counters[query][subquery] === undefined){
+          counters[query][subquery] = 0;
+      }
+      counters[query][subquery] += 1;
+      return counters[query][subquery];
+    }
+    function fillFormData(){
+      var result = [];
+      $("div[name='container']").each( function (){
+        let counter = $(this).attr('counter');
+        let selectedValue = $(`#selectQuestionType${counter} option:selected`).val();
+        switch(selectedValue){
+          case "text":
+            result.push({
+              question_id: counter,
+              question_type: 'text',
+              question_text: $(`#question${counter}`).val(),
+              question_text_answer: $(`#textAnswer${counter}`).val(),
+              question_test_answers: []
+            });
+            break;
+          case "test":
+            result.push({
+              question_id: counter,
+              question_type: 'test',
+              question_text: $(`#question${counter}`).val(),
+              question_text_answer: '',
+              question_test_answers: fillQuestionTestAnswers(counter)
+            });
+            break;
+        }
+        
+      });
+      return result;
+    }
+    function fillQuestionTestAnswers(counter){
+      var resultList = [];
+      $(`p[name='paragraph'][counter='${counter}']`).each(function() {
+        let subcounter = $(this).attr('subcounter');
+        let testAnswerText = $(`#testAnswer${counter}_${subcounter}`).val();
+        let isCorrect = false;
+        if ($(`#checkboxTestAnswer${counter}_${subcounter}`).is(':checked')){
+          isCorrect = true;
+        }
+        resultList.push({
+          test_answer_id: subcounter,
+          test_answer_text: testAnswerText,
+          test_answer_is_correct: isCorrect
+        });
+      });
+      return resultList;
+    } 
+    //var test = !{JSON.stringify(test)};
+    var test = undefined;
+    var formData = [];
+    if (!test){
+      var counters = {
+        "questions": 0,
+        "testAnswers": {}
+      };
+    }
+    else{
+      var counters = {
+        "questions": test.content.length || 0,
+        "testAnswers": questionTestAnswersParse(test) || {}
+      };
+    }
+    
+    $(document).ready(function() {
+      $('#myForm').submit(async function(event){
+        event.preventDefault();
+        formData = fillFormData();
+        var context = {
+          creator: $('#creator_login').val(),
+          questionsFormArray: formData
+        };
+        console.log(context);
+        await axios.post('http://localhost/admin/test/create', context);
+        $(window).attr('location', '/admin');
+      });
+      $('#buttonAddQuestion').click( function (){
+        let counter = getCounterAndIncrement('questions');
+        $('#mainContainer').append(`
+          <div id='container${counter}' class="container" name="container" counter="${counter}">
+            <p>
+              <select id="selectQuestionType${counter}" name="selectQuestionType" counter="${counter}">
+                <option value="test">Тестовый вопрос</option>
+                <!--option value="text">Текстовый вопрос</option-->
+              </select>
+              <button id="buttonDeleteQuestion${counter}" name="buttonDeleteQuestion" counter="${counter}">Удалить вопрос</button>
+            </p>
+            <p>
+              <input type="text" id="question${counter}" placeholder="Введите текст вопроса" required>
+            </p>
+            <div id="questionTypeContent${counter}" name="questionTypeContent" counter="${counter}">
+              <p>
+                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" counter="${counter}" type="button">Добавить тестовый ответ</button>
+              </p>
+              <div id="paragraphContainer${counter}" name="paragraphContainer" counter="${counter}"></div>
+            </div>
+        `);
+      });
+      $('#myForm').on("click", "button[name='buttonAddTestAnswer']", function (){
+        let counter = $(this).attr('counter');
+        let testAnswerCounter = getCounterAndIncrement("testAnswers", counter);
+        $('#paragraphContainer'+counter).append(`
+          <p id="paragraph${counter}_${testAnswerCounter}" name="paragraph" counter="${counter}" subcounter="${testAnswerCounter}">
+            <input type="text" id="testAnswer${counter}_${testAnswerCounter}" name="testAnswer" placeholder="Введите текст варианта ответа" required counter="${counter}" subcounter="${testAnswerCounter}">
+            <input type="checkbox" id="checkboxTestAnswer${counter}_${testAnswerCounter}" name="checkboxTestAnswer" counter="${counter}" subcounter="${testAnswerCounter}">
+            <button id="buttonDeleteTestAnswer${counter}_${testAnswerCounter}" name="buttonDeleteTestAnswer" counter="${counter}" subcounter="${testAnswerCounter}">Удалить вариант ответа</button>
+          </p>
+        `);
+      });
+      $('#myForm').on("click", "button[name='buttonDeleteTestAnswer']", function(){
+        let counter = $(this).attr('counter');
+        let testAnswerCounter = $(this).attr('subcounter');
+        $(`#paragraph${counter}_${testAnswerCounter}`).remove();
+      });
+      $('#myForm').on("click", "button[name='buttonDeleteQuestion']", function(){
+        let counter = $(this).attr('counter');
+        $(`#container${counter}`).remove();
+      });
+      $('#myForm').on("change", "select[name='selectQuestionType']", function(){
+        let counter = $(this).attr("counter");
+        let selectedValue = $(`#selectQuestionType${counter} option:selected`).val();
+        $(`#questionTypeContent${counter}`).empty();
+        switch(selectedValue){
+          case 'test':
+            $(`#questionTypeContent${counter}`).append(`
+              <p>
+                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" counter="${counter}" type="button">Добавить тестовый ответ</button>
+              </p>
+              <div id="paragraphContainer${counter}" name="paragraphContainer" counter="${counter}"></div>
+            `);
+            break;
+          case 'text':
+            $(`#questionTypeContent${counter}`).append(`
+              <input id="textAnswer${counter}" name="textAnswer" counter="${counter}" placeholder="Введите текст ответа" required>
+            `);
+            break;
+        }
+      });
+    });

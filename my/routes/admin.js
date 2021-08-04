@@ -6,8 +6,7 @@ const adminAuth = require('../middleware/adminAuth');
 
 /* Админка */
 router.get('/', adminAuth, async function(req, res, next) {
-  var users = await mydb.getUsers();
-  res.render('admin/adminIndex', { users: users });
+  res.render('admin/adminIndex', {});
 });
 
 router.get('/user/create', adminAuth, function(req, res, next){
@@ -121,7 +120,6 @@ router.get('/test/edit/:test_id', adminAuth, async function(req, res, next){
   try{
     if (req.params.test_id){
       var test = (await mydb.getTestById(req.params.test_id))[0];
-      console.log(test);
       if (!test){
         res.redirect('/admin');
       }
@@ -141,7 +139,11 @@ router.post('/test/edit/:test_id', adminAuth, async function(req, res, next){
   try{
     form = req.body;
     if (req.params.test_id){
-      await mydb.editTest(form, req.params.test_id);
+      let context = {
+        creator_login: form.creator_login,
+        content: JSON.stringify(form.content)
+      }
+      await mydb.editTest(context, parseInt(req.params.test_id));
     }
     res.redirect('/admin');
   } catch(err){
@@ -201,8 +203,8 @@ router.post('/result/edit/:result_id', adminAuth, async function(req, res, next)
     form = req.body;
     var data = {
       examinee_login: form.examinee_login,
-      test_id: form.test_id,
-      result_points: form.result_points
+      test_id: parseInt(form.test_id),
+      result_points: parseFloat(form.result_points)
     };
     await mydb.editResult(data, req.params.result_id);
     res.redirect('/admin');

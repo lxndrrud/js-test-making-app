@@ -1,148 +1,44 @@
 extends adminLayout 
 block content 
-  form(action="/admin/test/edit/" + test.id, method="post")
+  form(action="/admin/test/edit/" + test.id, method="post", id='myForm')
     input#creator_login(type="text", name="creator_login", value=`${test.creator_login}`, placeholder='Логин автора', required)
     button(id="buttonAddQuestion") Добавить вопрос
     input(type="submit", value="Принять")
-    each question in test.content 
-      div(id=`container${question.question_id}`, class='container')
-        select(name="selector", id=`selector${question.question_id}`)
-          if question.question_type == 'test'
-            option(value="test", checked) Тестовый вопрос
-            option(value="text") Текстовый вопрос
-          else if question.question_type == 'text'
-            option(value="text", checked) Текстовый вопрос
-            option(value="test") Тестовый вопрос
-        button(id=`buttonDeleteQuestion${question.question_id}`) Удалить вопрос  
-        p 
-          label(for=`question${question.question_id}`) Текст вопроса
-        p 
-          input(type="text", name="question", id=`question${question.question_id}`, value=question.question_text, required)
-        div(id = `paragraph${question.question_id}`)
-          if question.question_type == 'text'
-            p 
-              input(type="text", name="textAnswer", id=`textAnswer${question.question_id}`, value=question.question_text_answer,placeholder='Введите текст ответа', required)
-          else if question.question_type == 'test'
-            p
-              button(id=`buttonAddTestAnswer${question.question_id}`) Добавить вариант ответа
-              each test_answer in question.question_test_answers 
-                p(id=`answerParagraphElement${question.question_id}_${test_answer.test_answer_id}`)
-                  input(type="text", name="testAnswer", id=`testAnswer${test_answer.test_answer_id}`, value=test_answer.test_answer_text, placeholder='Текст варианта ответа', required)
-                  input(type="checkbox", name="checkboxTestAnswer", id=`checkboxTestAnswer_${question.question_id}_${test_answer.test_answer_id}`)
-                  button(id=`buttonDeleteTestAnswer${question.question_id}_${test_answer.test_answer_id}`) Удалить вариант ответа
+    div(id='mainContainer')
+      each question in test.content 
+        div(id=`container${question.question_id}`, name="container", counter=`${question.question_id}`, class='container')
+          select(id=`selectQuestionType${question.question_id}`, name="selectQuestionType", counter=`${question.question_id}`)
+            if question.question_type == 'test'
+              option(value="test", checked) Тестовый вопрос
+              //option(value="text") Текстовый вопрос
+            else if question.question_type == 'text'
+              //option(value="text", checked) Текстовый вопрос
+              option(value="test") Тестовый вопрос
+          button(id=`buttonDeleteQuestion${question.question_id}`, name="buttonDeleteQuestion", counter=`${question.question_id}`) Удалить вопрос  
+          p 
+            label(for=`question${question.question_id}`) Текст вопроса
+          p 
+            input(type="text", id=`question${question.question_id}`, name="question", counter=`${question.question_id}`, value=question.question_text, placeholder="Введите текст вопроса",required)
+          div(id = `questionTypeContent${question.question_id}`, name="questionTypeContent", counter=`${question.question_id}`)
+            if question.question_type == 'text'
+              p 
+                input(type="text", name="textAnswer", id=`textAnswer${question.question_id}`, value=question.question_text_answer,placeholder='Введите текст ответа', required)
+            else if question.question_type == 'test'
+              p
+                button(id=`buttonAddTestAnswer${question.question_id}`, name="buttonAddTestAnswer", counter=`${question.question_id}`) Добавить вариант ответа
+                div(id=`paragraphContainer${question.question_id}`, name="paragraphContainer", counter=`${question.question_id}`)
+                  each test_answer in question.question_test_answers 
+                    p(id=`paragraph${question.question_id}_${test_answer.test_answer_id}`, name="paragraph", counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`)
+                      input(type="text", name="testAnswer", id=`testAnswer${question.question_id}_${test_answer.test_answer_id}`, counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`, value=test_answer.test_answer_text, placeholder='Текст варианта ответа', required)
+                      if test_answer.test_answer_is_correct
+                        input(type="checkbox", name="checkboxTestAnswer", id=`checkboxTestAnswer${question.question_id}_${test_answer.test_answer_id}`, counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`, checked)
+                      else 
+                        input(type="checkbox", name="checkboxTestAnswer", id=`checkboxTestAnswer${question.question_id}_${test_answer.test_answer_id}`, counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`)
+                      button(id=`buttonDeleteTestAnswer${question.question_id}_${test_answer.test_answer_id}`, name="buttonDeleteTestAnswer", counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`) Удалить вариант ответа
                   
                       
 
   script.
-    var test = !{JSON.stringify(test)};
-    var counters = {
-      "questions": test.content.length || 0,
-      "testAnswers": questionTestAnswersParse(test) || {}
-    };
-    console.log(counters);
-    var form = document.getElementsByTagName('form')[0];
-    var formData = test.content;
-
-    for (let question of test.content){
-      var selector = document.getElementById('selector'+question.question_id);
-      var formDataElement = formData.find(item => item.question_id === question.question_id);
-      selector.setAttribute("onchange", 'questionTypeChanged(this)');
-      var questionText = document.getElementById('question'+question.question_id);
-      questionText.onchange = (e) => {
-        formDataElement.question_text = questionText.value;
-        e.preventDefault();
-      }
-      var containerElement = document.getElementById("container" + question.question_id);
-      var paragraphElement = document.getElementById("paragraph" + question.question_id);
-      switch(question.question_type){
-        case 'test':
-          var buttonAddTestAnswer = document.getElementById('buttonAddTestAnswer'+question.question_id);
-          buttonAddTestAnswer.onclick = () => {
-            const questionTestAnswersCounter = getCounterAndIncrement('testAnswers', question.question_id);
-
-            var answerParagraphElement = document.createElement("p");
-            answerParagraphElement.id = "answerParagraphElement" + question.question_id + "-" + questionTestAnswersCounter;
-            answerParagraphElement.name = "answerParagraphElement";
-            answerParagraphElement.classList.add("answerParagraph");
-
-            var questionTestAnswer = document.createElement("input");
-            questionTestAnswer.type = "text";
-            questionTestAnswer.required = true;
-            questionTestAnswer.name = "testAnswer";
-            questionTestAnswer.id = "testAnswer" + question.question_id + "-" + questionTestAnswersCounter;
-            questionTestAnswer.placeholder = "Введите текст варианта";
-
-            TEST_ANSWER_ELEMENT = {
-              test_answer_id: questionTestAnswersCounter,
-              test_answer_text: '',
-              test_answer_is_correct: false
-            }
-            
-            formDataElement.question_test_answers.push(TEST_ANSWER_ELEMENT);
-            
-            questionTestAnswer.onchange = (e) => {
-              // console.log(`questionTestAnswersCounter = ${questionTestAnswersCounter}`);
-              formDataElement.question_test_answers.find(item => item.test_answer_id === questionTestAnswersCounter).test_answer_text
-              //TEST_ANSWER_ELEMENT.test_answer_text
-              = questionTestAnswer.value;
-              e.preventDefault();
-            }
-
-            var checkboxIsCorrectAnswer = document.createElement("input");
-            checkboxIsCorrectAnswer.type = "checkbox";
-            checkboxIsCorrectAnswer.checked = false;
-            checkboxIsCorrectAnswer.name = "checkboxTestAnswer";
-            checkboxIsCorrectAnswer.id = "checkboxTestAnswer" + question.question_id + "-" + questionTestAnswersCounter;
-
-            checkboxIsCorrectAnswer.onchange = (e) => {
-              // console.log(`questionTestAnswersCounter = ${questionTestAnswersCounter}`);
-              formDataElement.question_test_answers.find(item => item.test_answer_id === questionTestAnswersCounter).test_answer_is_correct 
-              // TEST_ANSWER_ELEMENT.test_answer_is_correct
-              =  checkboxIsCorrectAnswer.checked ? true : false; 
-              e.preventDefault();
-            }
-
-            var btnDeleteTestAnswer = document.createElement("input");
-            btnDeleteTestAnswer.id = 'buttonDeleteTestAnswer' + question.question_id + "-" + questionTestAnswersCounter;
-            btnDeleteTestAnswer.type = "button";
-            btnDeleteTestAnswer.value = "Удалить вариант ответа";
-            btnDeleteTestAnswer.onclick = () => {
-                paragraphElement.removeChild(answerParagraphElement);
-                formDataElement.question_test_answers = formDataElement.question_test_answers.filter(
-                  item => item.test_answer_id !== questionTestAnswersCounter
-                );
-            }
-
-            answerParagraphElement.appendChild(questionTestAnswer);
-            answerParagraphElement.appendChild(checkboxIsCorrectAnswer);
-            answerParagraphElement.appendChild(btnDeleteTestAnswer);
-
-            paragraphElement.appendChild(answerParagraphElement);
-          }
-          for (let testAnswer of question.question_test_answers){
-            var buttonDeleteTestAnswer = document.getElementById('buttonDeleteTestAnswer'
-              +question.question_id+'_'+testAnswer.test_answer_id);
-            buttonDeleteTestAnswer.onclick = () => {
-              let answerParagraphElement = document.getElementById("answerParagraphElement" + question.question_id + '_'+ testAnswer.test_answer_id);
-              console.log(paragraphElement);
-              console.log(paragraphElement.childNodes);
-              paragraphElement.removeChild(answerParagraphElement);
-              formDataElement.question_test_answers = formDataElement.question_test_answers.filter(
-                item => item.test_answer_id !== testAnswer.test_answer_id
-              );
-            }
-          }
-          break;
-        case 'text':
-          var questionTextAnswer = document.getElementById('textAnswer'+question.question_id);
-          questionTextAnswer.onchange = (e) => {
-            formDataElement.question_text_answer = questionTextAnswer.value;
-            e.preventDefault();
-          }
-          break;
-      }
-    }
-
     function questionTestAnswersParse(test){
       var storage = {}
       for (let question of test.content){
@@ -151,9 +47,7 @@ block content
         }
       }
       return storage
-    };
-
-
+    }
     function getCounterAndIncrement(query, subquery){
       if (subquery === undefined){
           counters[query] += 1;
@@ -165,201 +59,139 @@ block content
       counters[query][subquery] += 1;
       return counters[query][subquery];
     }
-
-    function paragraphErase(paragraphElement){
-      while(paragraphElement.firstChild){
-          paragraphElement.removeChild(paragraphElement.firstChild);
-      }
+    function fillFormData(){
+      var result = [];
+      $("div[name='container']").each( function (){
+        let counter = $(this).attr('counter');
+        let selectedValue = $(`#selectQuestionType${counter} option:selected`).val();
+        switch(selectedValue){
+          case "text":
+            result.push({
+              question_id: counter,
+              question_type: 'text',
+              question_text: $(`#question${counter}`).val(),
+              question_text_answer: $(`#textAnswer${counter}`).val(),
+              question_test_answers: []
+            });
+            break;
+          case "test":
+            result.push({
+              question_id: counter,
+              question_type: 'test',
+              question_text: $(`#question${counter}`).val(),
+              question_text_answer: '',
+              question_test_answers: fillQuestionTestAnswers(counter)
+            });
+            break;
+        }
+        
+      });
+      return result;
     }
-
-    function questionTypeChanged(selector){
-
-      // console.log(selector.id.match(/[0-9]+/)[0]);
-      const containerNumber = parseInt(selector.id.match(/[0-9]+/)[0], 10);
-      var containerElement = document.getElementById("container" + containerNumber);
-      var paragraphElement = containerElement.lastChild;
-      var formDataElement = formData.find(item => item.question_id === containerNumber);
-      
-      switch(selector.options[selector.selectedIndex].text){
-          case "Текстовый вопрос":
-              paragraphErase(paragraphElement);
-              var questionAnswer = document.createElement("input");
-              questionAnswer.type = "text";
-              questionAnswer.required = true;
-              questionAnswer.name = "textAnswer";
-              questionAnswer.id = "textAnswer" + containerNumber;
-              questionAnswer.placeholder = "Введите текст ответа";
-              paragraphElement.appendChild(questionAnswer);
-
-              formDataElement.question_type = 'text';
-              formDataElement.question_test_answers = [];
-              questionAnswer.onchange = (e) => {
-                formDataElement.question_text_answer = questionAnswer.value;
-                e.preventDefault();
-              }
-              break;
-          case "Тестовый вопрос":
-              paragraphErase(paragraphElement);
-
-              formDataElement.question_type = 'test';
-              formDataElement.question_text_answer = '';
-
-              var btnAddTestAnswer = document.createElement("input");
-              btnAddTestAnswer.id = 'buttonAddTestAnswer' + containerNumber;
-              btnAddTestAnswer.type = "button";
-              btnAddTestAnswer.value = "Добавить вариант ответа";
-              paragraphElement.appendChild(btnAddTestAnswer);
-              btnAddTestAnswer.onclick = () => {
-                  const questionTestAnswersCounter = getCounterAndIncrement('testAnswers', containerNumber.toString());
-
-                  var answerParagraphElement = document.createElement("p");
-                  answerParagraphElement.id = "answerParagraph" + containerNumber + "-" + questionTestAnswersCounter;
-                  answerParagraphElement.name = "answerParagraph";
-                  answerParagraphElement.classList.add("answerParagraph");
-
-                  var questionTestAnswer = document.createElement("input");
-                  questionTestAnswer.type = "text";
-                  questionTestAnswer.required = true;
-                  questionTestAnswer.name = "testAnswer";
-                  questionTestAnswer.id = "testAnswer" + containerNumber + "-" + questionTestAnswersCounter;
-                  questionTestAnswer.placeholder = "Введите текст варианта";
-
-                  TEST_ANSWER_ELEMENT = {
-                    test_answer_id: questionTestAnswersCounter,
-                    test_answer_text: '',
-                    test_answer_is_correct: false
-                  }
-                  
-                  formDataElement.question_test_answers.push(TEST_ANSWER_ELEMENT);
-                  
-                  questionTestAnswer.onchange = (e) => {
-                    // console.log(`questionTestAnswersCounter = ${questionTestAnswersCounter}`);
-                    formDataElement.question_test_answers.find(item => item.test_answer_id === questionTestAnswersCounter).test_answer_text
-                    //TEST_ANSWER_ELEMENT.test_answer_text
-                    = questionTestAnswer.value;
-                    e.preventDefault();
-                  }
-
-                  var checkboxIsCorrectAnswer = document.createElement("input");
-                  checkboxIsCorrectAnswer.type = "checkbox";
-                  checkboxIsCorrectAnswer.checked = false;
-                  checkboxIsCorrectAnswer.name = "checkboxTestAnswer";
-                  checkboxIsCorrectAnswer.id = "checkboxTestAnswer" + containerNumber + "-" + questionTestAnswersCounter;
-
-                  checkboxIsCorrectAnswer.onchange = (e) => {
-                    // console.log(`questionTestAnswersCounter = ${questionTestAnswersCounter}`);
-                    formDataElement.question_test_answers.find(item => item.test_answer_id === questionTestAnswersCounter).test_answer_is_correct 
-                    // TEST_ANSWER_ELEMENT.test_answer_is_correct
-                    =  checkboxIsCorrectAnswer.checked ? true : false; 
-                    e.preventDefault();
-                  }
-
-                  var btnDeleteTestAnswer = document.createElement("input");
-                  btnDeleteTestAnswer.id = 'buttonDeleteTestAnswer' + containerNumber + "-" + questionTestAnswersCounter;
-                  btnDeleteTestAnswer.type = "button";
-                  btnDeleteTestAnswer.value = "Удалить вариант ответа";
-                  btnDeleteTestAnswer.onclick = () => {
-                      paragraphElement.removeChild(answerParagraphElement);
-                      formData.question_test_answers = formData.question_test_answers.filter(
-                        item => item.test_answer_id !== questionTestAnswersCounter
-                      );
-                  }
-
-                  answerParagraphElement.appendChild(questionTestAnswer);
-                  answerParagraphElement.appendChild(checkboxIsCorrectAnswer);
-                  answerParagraphElement.appendChild(btnDeleteTestAnswer);
-
-                  paragraphElement.appendChild(answerParagraphElement);
-              }
-              break;
-      }
-    }
-
-    document.getElementById('buttonAddQuestion').onclick = () => {
-      console.log(counters);
-
-      var questionsCounter = getCounterAndIncrement("questions");
-      var containerElement = document.createElement("div");
-      containerElement.name = "container";
-      containerElement.id = "container" + questionsCounter;
-      containerElement.classList.add("container");
-
-      QUESTION_ELEMENT = {
-        question_id: questionsCounter,
-        question_type: 'text',
-        question_text: '',
-        question_text_answer: '',
-        question_test_answers: []
+    function fillQuestionTestAnswers(counter){
+      var resultList = [];
+      $(`p[name='paragraph'][counter='${counter}']`).each(function() {
+        let subcounter = $(this).attr('subcounter');
+        let testAnswerText = $(`#testAnswer${counter}_${subcounter}`).val();
+        let isCorrect = false;
+        if ($(`#checkboxTestAnswer${counter}_${subcounter}`).is(':checked')){
+          isCorrect = true;
+        }
+        resultList.push({
+          test_answer_id: subcounter,
+          test_answer_text: testAnswerText,
+          test_answer_is_correct: isCorrect
+        });
+      });
+      return resultList;
+    } 
+    var test = !{JSON.stringify(test)};
+    //var test = undefined;
+    var formData = [];
+    if (!test){
+      var counters = {
+        "questions": 0,
+        "testAnswers": {}
       };
-
-      formData.push(QUESTION_ELEMENT);
-
-      //create selector element
-      var questionTypeSelector = document.createElement("select");
-      questionTypeSelector.setAttribute("onchange", 'questionTypeChanged(this)');
-      questionTypeSelector.name = "selector";
-      questionTypeSelector.id = "selector" + questionsCounter;
-      var testQuestionOption = document.createElement("option");
-      testQuestionOption.text = "Тестовый вопрос";
-      testQuestionOption.value = "Тестовый вопрос";
-      var textQuestionOption = document.createElement("option");
-      textQuestionOption.text = "Текстовый вопрос";
-      textQuestionOption.value = "Текстовый вопрос";
-      questionTypeSelector.appendChild(testQuestionOption); 
-      questionTypeSelector.appendChild(textQuestionOption);
-      
-      
-
-
-      // create Question Text element
-      var questionText = document.createElement("input");
-      questionText.type = "text";
-      questionText.required = true;
-      questionText.name = "question";
-      questionText.id = "question" + questionsCounter;
-      questionText.placeholder = "Введите текст вопроса";
-      questionText.onchange = (e) => {
-        formData.find(item => item.question_id === questionsCounter).question_text = questionText.value;
-        // console.log(questionText.value);
-        e.preventDefault();
-      }
-
-
-      // create Delete Question button
-      var btnDeleteQuestion = document.createElement("input");
-      btnDeleteQuestion.type = "button";
-      btnDeleteQuestion.value = "Удалить вопрос";
-      btnDeleteQuestion.id = "buttonDeleteQuestion" + questionsCounter;
-      btnDeleteQuestion.onclick = () => {
-          form.removeChild(containerElement);
-          formData = formData.filter(item => item.question_id !== questionsCounter);
-      }
-
-      
-      // create Paragraph Element for question type management
-      var paragraphElement = document.createElement("p");
-      paragraphElement.name = "paragraph";
-      paragraphElement.classList.add("paragraph");
-      paragraphElement.id = "paragraph" + questionsCounter;
-
-      //add all elements to the form
-      containerElement.appendChild(questionTypeSelector);
-      containerElement.appendChild(questionText);
-      containerElement.appendChild(btnDeleteQuestion);
-      containerElement.appendChild(paragraphElement);
-      
-
-      form.appendChild(containerElement);
     }
-
-    window.onload = function() {
-      form.addEventListener('submit', kek, true);
+    else{
+      var counters = {
+        "questions": test.content.length || 0,
+        "testAnswers": questionTestAnswersParse(test) || {}
+      };
     }
-    var kek = async function(event) {
     
-      if (formData){
+    $(document).ready(function() {
+      $('#myForm').submit(async function(event){
         event.preventDefault();
-        await axios.post('http://localhost/admin/test/edit/'+'#{test.id}', formData);
-        window.location = '/';
-      }
-    }
+        formData = fillFormData();
+        var context = {
+          creator_login: $('#creator_login').val(),
+          content: formData
+        };
+        await axios.post(`http://localhost/admin/test/edit/${test.id}`, context);
+        $(window).attr('location', '/admin');
+      });
+      $('#buttonAddQuestion').click( function (){
+        let counter = getCounterAndIncrement('questions');
+        $('#mainContainer').append(`
+          <div id='container${counter}' class="container" name="container" counter="${counter}">
+            <p>
+              <select id="selectQuestionType${counter}" name="selectQuestionType" counter="${counter}">
+                <option value="test">Тестовый вопрос</option>
+                <!--option value="text">Текстовый вопрос</option-->
+              </select>
+              <button id="buttonDeleteQuestion${counter}" name="buttonDeleteQuestion" counter="${counter}">Удалить вопрос</button>
+            </p>
+            <p>
+              <input type="text" id="question${counter}" placeholder="Введите текст вопроса" required>
+            </p>
+            <div id="questionTypeContent${counter}" name="questionTypeContent" counter="${counter}">
+              <p>
+                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" counter="${counter}" type="button">Добавить тестовый ответ</button>
+              </p>
+              <div id="paragraphContainer${counter}" name="paragraphContainer" counter="${counter}"></div>
+            </div>
+        `);
+      });
+      $('#myForm').on("click", "button[name='buttonAddTestAnswer']", function (){
+        let counter = $(this).attr('counter');
+        let testAnswerCounter = getCounterAndIncrement("testAnswers", counter);
+        $('#paragraphContainer'+counter).append(`
+          <p id="paragraph${counter}_${testAnswerCounter}" name="paragraph" counter="${counter}" subcounter="${testAnswerCounter}">
+            <input type="text" id="testAnswer${counter}_${testAnswerCounter}" name="testAnswer" placeholder="Введите текст варианта ответа" required counter="${counter}" subcounter="${testAnswerCounter}">
+            <input type="checkbox" id="checkboxTestAnswer${counter}_${testAnswerCounter}" name="checkboxTestAnswer" counter="${counter}" subcounter="${testAnswerCounter}">
+            <button id="buttonDeleteTestAnswer${counter}_${testAnswerCounter}" name="buttonDeleteTestAnswer" counter="${counter}" subcounter="${testAnswerCounter}">Удалить вариант ответа</button>
+          </p>
+        `);
+      });
+      $('#myForm').on("click", "button[name='buttonDeleteTestAnswer']", function(){
+        let counter = $(this).attr('counter');
+        let testAnswerCounter = $(this).attr('subcounter');
+        $(`#paragraph${counter}_${testAnswerCounter}`).remove();
+      });
+      $('#myForm').on("click", "button[name='buttonDeleteQuestion']", function(){
+        let counter = $(this).attr('counter');
+        $(`#container${counter}`).remove();
+      });
+      $('#myForm').on("change", "select[name='selectQuestionType']", function(){
+        let counter = $(this).attr("counter");
+        let selectedValue = $(`#selectQuestionType${counter} option:selected`).val();
+        $(`#questionTypeContent${counter}`).empty();
+        switch(selectedValue){
+          case 'test':
+            $(`#questionTypeContent${counter}`).append(`
+              <p>
+                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" counter="${counter}" type="button">Добавить тестовый ответ</button>
+              </p>
+              <div id="paragraphContainer${counter}" name="paragraphContainer" counter="${counter}"></div>
+            `);
+            break;
+          case 'text':
+            $(`#questionTypeContent${counter}`).append(`
+              <input id="textAnswer${counter}" name="textAnswer" counter="${counter}" placeholder="Введите текст ответа" required>
+            `);
+            break;
+        }
+      });
+    });    

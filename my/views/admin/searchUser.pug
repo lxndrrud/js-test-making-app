@@ -36,9 +36,9 @@ block content
               for(let i = 0; i < resp.data.users.length; i++) 
                 $('#search_container').append(
                   `<p>
-                    <span>
+                    <a href="/test/find/${resp.data.users[i].login}">
                       ${resp.data.users[i].login} - ${resp.data.users[i].name} ${resp.data.users[i].surname}
-                    </span>
+                    </a>
                     <a href="/admin/user/edit/${resp.data.users[i].login}">
                       Редактировать
                     </a>

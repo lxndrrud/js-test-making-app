@@ -2,7 +2,6 @@ extends ../layout
     
 block content
   h1 Создайте Тест
-  // script(src="/javascripts/testMaking.js")
 
   form(action="/test/make", method="post", id="myForm")
     button(id="buttonAddQuestion") Добавить вопрос
@@ -32,30 +31,42 @@ block content
     }
     function fillFormData(){
       var result = [];
-      //console.log($('#mainContainer').children());
       $("div[name='container']").each( function (){
-        //for(let container of $('#mainContainer').children()){
         let counter = $(this).attr('counter');
-        console.log(counter);
-        result.push({
-          question_id: counter,
-          question_type: 'test',
-          question_text: $(`question${counter}`).val(),
-          question_text_answer: '',
-          question_test_answers: fillQuestionTestAnswers(counter)
-        });
+        let selectedValue = $(`#selectQuestionType${counter} option:selected`).val();
+        switch(selectedValue){
+          case "text":
+            result.push({
+              question_id: counter,
+              question_type: 'text',
+              question_text: $(`#question${counter}`).val(),
+              question_text_answer: $(`#textAnswer${counter}`).val(),
+              question_test_answers: []
+            });
+            break;
+          case "test":
+            result.push({
+              question_id: counter,
+              question_type: 'test',
+              question_text: $(`#question${counter}`).val(),
+              question_text_answer: '',
+              question_test_answers: fillQuestionTestAnswers(counter)
+            });
+            break;
+        }
+        
       });
       return result;
     }
     function fillQuestionTestAnswers(counter){
       var resultList = [];
-      $(`#paragraphContainer${counter}`).each(function() {
-        //for(let paragraph of container.children()){
-        //let counter = paragraph.attr('counter');
+      $(`p[name='paragraph'][counter='${counter}']`).each(function() {
         let subcounter = $(this).attr('subcounter');
-        console.log(subcounter);
-        let testAnswerText = $(`testAnswer${counter}_${subcounter}`).val();
-        let isCorrect = $(`checkboxTestAnswer${counter}_${subcounter}`).val();
+        let testAnswerText = $(`#testAnswer${counter}_${subcounter}`).val();
+        let isCorrect = false;
+        if ($(`#checkboxTestAnswer${counter}_${subcounter}`).is(':checked')){
+          isCorrect = true;
+        }
         resultList.push({
           test_answer_id: subcounter,
           test_answer_text: testAnswerText,
@@ -86,35 +97,36 @@ block content
         console.log('.submit() called!!!');
         formData = fillFormData();
         console.log(formData);
-        await axios.post('http:/localhost/test/make', formData);
+        await axios.post('http://localhost/test/make', formData);
         $(window).attr('location', '/');
       });
       $('#buttonAddQuestion').click( function (){
-        //$('#myForm').on("click", "#buttonAddQuestion", function () {
         let counter = getCounterAndIncrement('questions');
         $('#mainContainer').append(`
-          <div id='container${counter}' class="container" counter="${counter}">
+          <div id='container${counter}' class="container" name="container" counter="${counter}">
             <p>
-              <select>
-                <!--option value="text">Текстовый вопрос</option-->
+              <select id="selectQuestionType${counter}" name="selectQuestionType" counter="${counter}">
                 <option value="test">Тестовый вопрос</option>
+                <!--option value="text">Текстовый вопрос</option-->
               </select>
               <button id="buttonDeleteQuestion${counter}" name="buttonDeleteQuestion" counter="${counter}">Удалить вопрос</button>
             </p>
             <p>
               <input type="text" id="question${counter}" placeholder="Введите текст вопроса" required>
             </p>
-            <p>
-              <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" counter="${counter}" type="button">Добавить тестовый ответ</button>
-            </p>
-            <div id="paragraphContainer${counter}" name="paragraphContainer" counter="${counter}"></div>
+            <div id="questionTypeContent${counter}" name="questionTypeContent" counter="${counter}">
+              <p>
+                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" counter="${counter}" type="button">Добавить тестовый ответ</button>
+              </p>
+              <div id="paragraphContainer${counter}" name="paragraphContainer" counter="${counter}"></div>
+            </div>
         `);
       });
       $('#myForm').on("click", "button[name='buttonAddTestAnswer']", function (){
         let counter = $(this).attr('counter');
         let testAnswerCounter = getCounterAndIncrement("testAnswers", counter);
         $('#paragraphContainer'+counter).append(`
-          <p id="paragraph${counter}_${testAnswerCounter}" counter="${counter}" subcounter="${testAnswerCounter}">
+          <p id="paragraph${counter}_${testAnswerCounter}" name="paragraph" counter="${counter}" subcounter="${testAnswerCounter}">
             <input type="text" id="testAnswer${counter}_${testAnswerCounter}" name="testAnswer" placeholder="Введите текст варианта ответа" required counter="${counter}" subcounter="${testAnswerCounter}">
             <input type="checkbox" id="checkboxTestAnswer${counter}_${testAnswerCounter}" name="checkboxTestAnswer" counter="${counter}" subcounter="${testAnswerCounter}">
             <button id="buttonDeleteTestAnswer${counter}_${testAnswerCounter}" name="buttonDeleteTestAnswer" counter="${counter}" subcounter="${testAnswerCounter}">Удалить вариант ответа</button>
@@ -129,5 +141,25 @@ block content
       $('#myForm').on("click", "button[name='buttonDeleteQuestion']", function(){
         let counter = $(this).attr('counter');
         $(`#container${counter}`).remove();
+      });
+      $('#myForm').on("change", "select[name='selectQuestionType']", function(){
+        let counter = $(this).attr("counter");
+        let selectedValue = $(`#selectQuestionType${counter} option:selected`).val();
+        $(`#questionTypeContent${counter}`).empty();
+        switch(selectedValue){
+          case 'test':
+            $(`#questionTypeContent${counter}`).append(`
+              <p>
+                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" counter="${counter}" type="button">Добавить тестовый ответ</button>
+              </p>
+              <div id="paragraphContainer${counter}" name="paragraphContainer" counter="${counter}"></div>
+            `);
+            break;
+          case 'text':
+            $(`#questionTypeContent${counter}`).append(`
+              <input id="textAnswer${counter}" name="textAnswer" counter="${counter}" placeholder="Введите текст ответа" required>
+            `);
+            break;
+        }
       });
     });

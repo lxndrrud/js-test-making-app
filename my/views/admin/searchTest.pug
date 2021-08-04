@@ -33,6 +33,9 @@ block content
               for(let i = 0; i < resp.data.tests.length; i++) 
                 $('#search_container').append(
                   `<p>
+                    <a href="/test/find/${resp.data.login}">
+                      ${resp.data.login}
+                    </a>
                     <a href="/test/${resp.data.tests[i].id}">
                       Тест #${resp.data.tests[i].id}
                     </a>
