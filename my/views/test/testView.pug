@@ -1,9 +1,9 @@
 extends ../layout
 
 block content 
-  ul
+  ul(class="list-group")
     each question in questionsList
-      li 
+      li(class="list-group-item")
         p= question.question_text
         if question.question_type == 'text'
           p Текстовый вопрос

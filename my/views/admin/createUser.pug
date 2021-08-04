@@ -3,31 +3,31 @@ extends adminLayout
 block content
   form(action="/admin/user/create", method="post") 
         p
-            label(for="login") Логин
+            label(for="login" class="form-label") Логин
         p
-            input#login(type="text", name="login")
+            input#login(type="text", name="login", class="form-control")
         p 
-            label(for="password") Пароль
+            label(for="password" class="form-label") Пароль
         p
-            input#password(type="password", name="password")
+            input#password(type="password", name="password", class="form-control")
         p 
-            label(for="passwordConfirm") Подтверждение пароля
+            label(for="passwordConfirm" class="form-label") Подтверждение пароля
         p
-            input#passwordConfirm(type="password", name="passwordConfirm")
+            input#passwordConfirm(type="password", name="passwordConfirm", class="form-control")
         p 
-            label(for="name") Имя
+            label(for="name" class="form-label") Имя
         p
-            input#name(type="text", name="name")
+            input#name(type="text", name="name", class="form-control")
         p 
-            label(for="surname") Фамилия
+            label(for="surname" class="form-label") Фамилия
         p 
-            input#surname(type="text", name="surname")  
+            input#surname(type="text", name="surname", class="form-control")  
         p 
-            label(for="role_title") Идентификатор роли
+            label(for="role_title" class="form-label") Идентификатор роли
         p 
-            select
+            select(name="role_title", class="form-select")
               option(value="Administrator") Администратор
               option(value="Operator") Оператор
         p
-            input(type="submit", value="Создать пользователя")
+            input(type="submit", value="Создать пользователя", class="btn btn-primary")
 

@@ -1,9 +1,9 @@
 extends ../layout 
 block content
     h2 Созданнные тесты
-        ul
+        ul(class="list-group")
             each test in testList
-                li 
+                li(class="list-group-item")
                     a(href="/test/"+test.id) Тест #{test.id}
                 
 

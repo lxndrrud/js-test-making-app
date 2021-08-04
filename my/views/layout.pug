@@ -3,6 +3,7 @@ html
   head
     block head
       title= title
+      link(rel="stylesheet", href="/css/bootstrap.min.css")
       link(rel='stylesheet', href='/stylesheets/style.css')
       script(src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous")
       script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
@@ -14,4 +15,5 @@ html
     // a(href="/users/login") Войти
     // a(href="/users/logout") Выйти
     // a(href="/test") Создать тест   
-    block content
+    div(class="container-xl")
+      block content
