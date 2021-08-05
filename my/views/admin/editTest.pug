@@ -3,7 +3,7 @@ block content
   form(action="/admin/test/edit/" + test.id, method="post", id='myForm')
     input#creator_login(type="text", name="creator_login", value=`${test.creator_login}`, placeholder='Логин автора', required)
     button(id="buttonAddQuestion") Добавить вопрос
-    input(type="submit", value="Принять")
+    button(type="submit") Принять
     div(id='mainContainer')
       each question in test.content 
         div(id=`container${question.question_id}`, name="container", counter=`${question.question_id}`, class='container')

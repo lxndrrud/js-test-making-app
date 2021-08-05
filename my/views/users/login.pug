@@ -1,14 +1,17 @@
 extends ../layout 
 block content
-    form(action="/users/login", method="post") 
-        p
-            label(for="login") Логин
-        p
-            input#name(type="text", name="login")
-        p 
-            label(for="password") Пароль
-        p
-            input#password(type="password", name="password")
-        p
-            button(type="submit") Вход
+    .container-lg
+        div(class="row justify-content-center align-items-center")
+            .col-4
+                form(action="/users/login", method="post" class="my-form") 
+                    p
+                        label(for="login" class="form-label") Логин
+                    p
+                        input#name(type="text", name="login" class="form-control")
+                    p 
+                        label(for="password" class="form-label") Пароль
+                    p
+                        input#password(type="password", name="password" class="form-control")
+                    p
+                        button(type="submit" class="btn my-link-danger my-form-link") Вход
 

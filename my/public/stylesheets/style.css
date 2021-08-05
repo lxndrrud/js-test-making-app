@@ -1,17 +1,83 @@
+/*
+Цвета:
+#f4f1de - светлый белый
+#3d405b - тёмный синий
+#e07a5f - приятный оранжевый
+#f2cc8f - бежевый 
+#81b29a - приятный зеленый
+
+// Уже не из этой гаммы
+
+#ffbe0b - немного другой оранжевый
+#98c1d9 - голубой
+
+*/
+
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
   min-width: 600px;
   min-height: 600px;
+  background-color: #f4f1de;
+  font-family: 'Noto Sans', sans-serif;
+  color: #3d405b;
 }
 
-a {
-  color: #0077ff;
+.my-container{
+  padding: 10px;
+  border: 3px solid black;
+  border-radius: 10px;
+  background-color: #f4f1de;
+}
+
+.my-link{
+  color: #3d405b;
+  border: 3px solid #3d405b;
+  border-radius: 10px;
   margin-right: 15px;
   text-decoration-line: none;
 }
 
-.container{
-  border: 1px solid black;
+.my-link:hover{
+  color: #f4f1de;
+  background-color: #81b29a;
+}
+
+.my-link-danger{
+  color: #3d405b;
+  border: 3px solid #3d405b;
   border-radius: 10px;
+  margin-right: 15px;
+  text-decoration-line: none;
+}
+
+.my-link-danger:hover{
+  color: #f4f1de;
+  background-color: #e07a5f;
+}
+
+.my-link-confirm{
+  color: #3d405b;
+  border: 3px solid #3d405b;
+  border-radius: 10px;
+  margin-right: 15px;
+  text-decoration-line: none;
+}
+
+.my-link-confirm:hover{
+  color: #f4f1de;
+  background-color: #3d405b;
+}
+
+.my-form label{
+  color: #3d405b;
+  font-size:x-large;
+}
+
+.my-form-link{
+  width: 100%;
+}
+
+.content{
+  margin-top: 40px;
 }

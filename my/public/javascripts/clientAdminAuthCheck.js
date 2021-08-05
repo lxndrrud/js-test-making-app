@@ -11,56 +11,44 @@ function getCookie(name) {
 
 var body = document.getElementsByTagName("body")[0];
 
-var indexButton = document.createElement("a");
-indexButton.href='/';
-indexButton.innerText='Главная';
-body.appendChild(indexButton);
+$(".nav").append(`
+    <a href="/" class="btn my-link col">
+        Главная
+    </a>
+`);
 
 
 if (getCookie('TOKEN')){
 
-  var adminMainPageButton = document.createElement("a");
-  adminMainPageButton.href='/admin/';
-  adminMainPageButton.innerText='Администраторская';
-  body.appendChild(adminMainPageButton);
-
-  // ссылки на тест и выход  
-  var userCreateButton = document.createElement("a");
-  userCreateButton.href='/admin/user/create';
-  userCreateButton.innerText='Cоздать пользователя';
-  body.appendChild(userCreateButton);
-
-  var testCreateButton = document.createElement("a");
-  testCreateButton.href='/admin/test/create';
-  testCreateButton.innerText='Cоздать тест';
-  body.appendChild(testCreateButton);
-
-  var resultCreateButton = document.createElement("a");
-  resultCreateButton.href='/admin/result/create';
-  resultCreateButton.innerText='Cоздать результат';
-  body.appendChild(resultCreateButton);
-
-  var searchButton = document.createElement("a");
-  searchButton.href='/admin/search/';
-  searchButton.innerText='Поиск';
-  body.appendChild(searchButton);
-
-  var logoutButton = document.createElement("a");
-  logoutButton.href='/users/logout/';
-  logoutButton.innerText='Выйти';
-  body.appendChild(logoutButton);
+  $(".nav").append(`
+        <a href="/admin/" class="btn my-link col">
+          Администраторская
+        </a>
+        <a href="/admin/user/create" class="btn my-link col">
+            Создать пользователя
+        </a>
+        <a href="/admin/test/create" class="btn my-link col">
+            Создать тест
+        </a>
+        <a href="/admin/search" class="btn my-link col">
+            Поиск
+        </a>
+        <a href="/users/logout" class="btn my-link-danger col">
+            Выйти
+        </a>
+        
+    `);  
 
 } else {
   // ссылки регистрации и входа
-  var registerButton = document.createElement("a");
-  registerButton.href='/users/register/';
-  registerButton.innerText='Зарегистрироваться';
-  body.appendChild(registerButton);
-
-  var loginButton = document.createElement("a");
-  loginButton.href='/users/login/';
-  loginButton.innerText='Войти';
-  body.appendChild(loginButton);
+  $(".nav").append(`
+        <a href="/users/register" class="btn my-link-danger col">
+            Зарегистрироваться
+        </a>
+        <a href="/users/login" class="btn my-link-danger col">
+            Войти
+        </a>
+  `);
 }
 
 

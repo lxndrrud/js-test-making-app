@@ -2,10 +2,9 @@ extends ../layout
     
 block content
   h1 Создайте Тест
-
-  form(action="/test/make", method="post", id="myForm")
-    button(id="buttonAddQuestion") Добавить вопрос
-    input(type="submit", value="Принять")
+  form(action="/test/make", method="post", id="myForm" class="my-form")
+    button(id="buttonAddQuestion" class="btn my-link") Добавить вопрос
+    button(type="submit" class="btn my-link-confirm") Принять
     div(id='mainContainer')
 
   script.
@@ -103,20 +102,20 @@ block content
       $('#buttonAddQuestion').click( function (){
         let counter = getCounterAndIncrement('questions');
         $('#mainContainer').append(`
-          <div id='container${counter}' class="container" name="container" counter="${counter}">
+          <div id='container${counter}' class="my-container" name="container" counter="${counter}">
             <p>
-              <select id="selectQuestionType${counter}" name="selectQuestionType" counter="${counter}">
+              <select id="selectQuestionType${counter}" name="selectQuestionType" counter="${counter}" class="col-form-select col-sm-5">
                 <option value="test">Тестовый вопрос</option>
                 <!--option value="text">Текстовый вопрос</option-->
               </select>
-              <button id="buttonDeleteQuestion${counter}" name="buttonDeleteQuestion" counter="${counter}">Удалить вопрос</button>
+              <button id="buttonDeleteQuestion${counter}" name="buttonDeleteQuestion" counter="${counter}" class="btn my-link-danger">Удалить вопрос</button>
             </p>
-            <p>
-              <input type="text" id="question${counter}" placeholder="Введите текст вопроса" required>
+            <p class="col-sm-5">
+              <input type="text" id="question${counter}" placeholder="Введите текст вопроса" class="form-control" required>
             </p>
             <div id="questionTypeContent${counter}" name="questionTypeContent" counter="${counter}">
               <p>
-                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" counter="${counter}" type="button">Добавить тестовый ответ</button>
+                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" class="btn my-link" counter="${counter}" type="button">Добавить тестовый ответ</button>
               </p>
               <div id="paragraphContainer${counter}" name="paragraphContainer" counter="${counter}"></div>
             </div>
@@ -127,9 +126,9 @@ block content
         let testAnswerCounter = getCounterAndIncrement("testAnswers", counter);
         $('#paragraphContainer'+counter).append(`
           <p id="paragraph${counter}_${testAnswerCounter}" name="paragraph" counter="${counter}" subcounter="${testAnswerCounter}">
-            <input type="text" id="testAnswer${counter}_${testAnswerCounter}" name="testAnswer" placeholder="Введите текст варианта ответа" required counter="${counter}" subcounter="${testAnswerCounter}">
+            <input type="text" id="testAnswer${counter}_${testAnswerCounter}" name="testAnswer" placeholder="Введите текст варианта ответа" class="col-form-control col-sm-5" required counter="${counter}" subcounter="${testAnswerCounter}">
             <input type="checkbox" id="checkboxTestAnswer${counter}_${testAnswerCounter}" name="checkboxTestAnswer" counter="${counter}" subcounter="${testAnswerCounter}">
-            <button id="buttonDeleteTestAnswer${counter}_${testAnswerCounter}" name="buttonDeleteTestAnswer" counter="${counter}" subcounter="${testAnswerCounter}">Удалить вариант ответа</button>
+            <button id="buttonDeleteTestAnswer${counter}_${testAnswerCounter}" name="buttonDeleteTestAnswer" class="btn my-link-danger" counter="${counter}" subcounter="${testAnswerCounter}">Удалить вариант ответа</button>
           </p>
         `);
       });

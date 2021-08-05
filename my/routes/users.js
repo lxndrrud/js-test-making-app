@@ -85,7 +85,7 @@ router.post('/login/', async function(req, res, next){
       res.cookie('LOGIN', user.login, unsignedOptions);
       res.cookie('ROLE', userDB.role_title, signedOptions);
       res.cookie('TOKEN', token, signedOptions); // options is optional
-      res.redirect('../');
+      res.redirect('/');
     }
     else{
       res.status(400).send('Неверные данные!');
@@ -102,7 +102,7 @@ router.get('/logout/', auth, function(req, res, next){
     res.clearCookie('LOGIN');
     res.clearCookie('ROLE');
   }
-  res.redirect('../../');
+  res.redirect('/');
 });
 
 function generateAccessToken(login, role_title) {

@@ -1,26 +1,29 @@
 extends ../layout 
 block content
-    form(action="/users/register", method="post") 
-        p
-            label(for="login") Логин
-        p
-            input#login(type="text", name="login")
-        p 
-            label(for="password") Пароль
-        p
-            input#password(type="password", name="password")
-        p 
-            label(for="passwordConfirm") Пароль
-        p
-            input#passwordConfirm(type="password", name="passwordConfirm")
-        p 
-            label(for="name") Имя
-        p
-            input#name(type="text", name="name")
-        p 
-            label(for="surname") Фамилия
-        p 
-            input#surname(type="text", name="surname")  
-        p
-            input(type="submit", value="Зарегистрироваться")
+    .container-lg
+        div(class="row justify-content-center align-items-center")
+            .col-4
+                form(action="/users/register", method="post" class="my-form") 
+                    p
+                        label(for="login" class="form-label") Логин
+                    p
+                        input#login(type="text", name="login", class="form-control")
+                    p 
+                        label(for="password" class="form-label") Пароль
+                    p
+                        input#password(type="password", name="password", class="form-control")
+                    p 
+                        label(for="passwordConfirm", class="form-label" ) Подтверждение пароля
+                    p
+                        input#passwordConfirm(type="password", name="passwordConfirm", class="form-control")
+                    p 
+                        label(for="name" class="form-label") Имя
+                    p
+                        input#name(type="text", name="name", class="form-control")
+                    p 
+                        label(for="surname" class="form-label") Фамилия
+                    p 
+                        input#surname(type="text", name="surname", class="form-control")  
+                    p
+                        button(type="submit" class="btn my-link-danger my-form-link") Зарегистрироваться
 

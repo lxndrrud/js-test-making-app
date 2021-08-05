@@ -6,7 +6,7 @@ block content
   form(action="/admin/test/create", method="post", id="myForm")
     input#creator_login(type="text", name="creator_login", placeholder="Введите логин автора", required)
     button(id="buttonAddQuestion") Добавить вопрос
-    input(type="submit", value="Принять")
+    button(type="submit") Принять
     div(id='mainContainer')
 
   script.

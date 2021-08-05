@@ -3,17 +3,16 @@ html
   head
     block head
       title= title
+      link(rel="preconnect" href="https://fonts.googleapis.com")
+      link(rel="preconnect" href="https://fonts.gstatic.com" crossorigin)
+      link(href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@700&display=swap" rel="stylesheet")
       link(rel="stylesheet", href="/css/bootstrap.min.css")
       link(rel='stylesheet', href='/stylesheets/style.css')
       script(src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous")
       script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
   body
-    script(src="/javascripts/clientAuthCheck.js") 
-    
-    // a(href="/") Главная
-    // a(href="/users/register") Зарегистрироваться
-    // a(href="/users/login") Войти
-    // a(href="/users/logout") Выйти
-    // a(href="/test") Создать тест   
-    div(class="container-xl")
-      block content
+    .container-lg
+      .row.nav
+        script(src="/javascripts/clientAuthCheck.js") 
+      .row.content
+        block content
