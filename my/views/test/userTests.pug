@@ -2,9 +2,9 @@ extends ../layout
 block content
     h1 Созданнные тесты
         h2
-            ul(class="list-group")
+            ul
                 each test in testList
-                    li(class="list-group-item")
-                        a(href="/test/"+test.id) Тест #{test.id}
+                    li
+                        a(href="/test/"+test.id, class="btn my-link-confirm") Тест ##{test.id}
                 
 

@@ -11,7 +11,7 @@ function getCookie(name) {
 
 
 $(".nav").append(`
-    <a href="/" class="btn my-link col">
+    <a href="/" class="btn my-link-confirm col">
         Главная
     </a>
 `);
@@ -20,16 +20,16 @@ $(".nav").append(`
 if (getCookie('TOKEN')){
     // ссылки на создание теста, просмотр своих тестов и выход
     $(".nav").append(`
-        <a href="/test/make" class="btn my-link col">
-            Создать тест
+        <a href="/test/" class="btn my-link-confirm col">
+            Тесты
         </a>
-        <a href="/test/find/${getCookie('LOGIN')}" class="btn my-link col">
+        <a href="/test/find/${getCookie('LOGIN')}" class="btn my-link-confirm col">
             Мои тесты
         </a>
-        <a href="/test/results" class="btn my-link col">
+        <a href="/test/results" class="btn my-link-confirm col">
             Мои результаты
         </a>
-        <a href="/users/logout" class="btn my-link-danger col">
+        <a href="/users/logout" class="btn my-link-confirm col">
             Выйти
         </a>
         
@@ -39,10 +39,10 @@ if (getCookie('TOKEN')){
     // ссылки регистрации и входа
 
     $(".nav").append(`
-        <a href="/users/register" class="btn my-link-danger col">
+        <a href="/users/register" class="btn my-link-confirm col">
             Зарегистрироваться
         </a>
-        <a href="/users/login" class="btn my-link-danger col">
+        <a href="/users/login" class="btn my-link-confirm col">
             Войти
         </a>
     `);

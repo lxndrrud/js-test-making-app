@@ -1,0 +1,41 @@
+extends ../layout 
+block content 
+  .container-lg
+    div(class="row justify-content-center align-items-center")
+      .col-4 
+        form(method="post", id="query", name='query', class="my-form")  
+          p 
+            label(for="test_id", class="form-label") Идентификатор теста 
+          p 
+            input#test_id(type="text", name="test_id", class="form-control")
+          p 
+            button(type="submit", class="btn my-link-confirm my-form-link") Принять
+        div(id="search_container")
+
+
+
+  script.
+    $(async function() {
+      $( "#query" ).submit(async function( event ) {
+
+        event.preventDefault();
+        var form = document.forms.query;
+
+        var formData = {
+          test_id: form.elements.test_id.value
+        }
+
+        $('#search_container').html('');
+        await axios.post('http://localhost/admin/search/tests', formData)
+          .then(resp => {
+              for(let i = 0; i < resp.data.tests.length; i++) 
+                $('#search_container').append(`
+                  <a href="/test/pass/${resp.data.tests[i].id}" class="btn my-link-confirm my-form-link">
+                    Пройти тест #${resp.data.tests[i].id}
+                  </a>
+                  `);
+              
+          })
+       
+      });
+    })

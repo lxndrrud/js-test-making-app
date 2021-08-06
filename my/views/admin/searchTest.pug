@@ -1,17 +1,20 @@
 extends adminLayout 
 block content 
-  form(method="post", id="query", name='query')
-    p
-      label(for="login") Логин пользователя
-    p   
-      input#login(type="text", name="login")  
-    p 
-      label(for="test_id") Идентификатор теста 
-    p 
-      input#test_id(type="text", name="test_id")
-    p 
-      button(type="submit") Принять
-  div(id="search_container")
+  .container-lg
+    div(class="row justify-content-center align-items-center")
+      .col-4 
+        form(method="post", id="query", name='query', class="my-form")
+          p
+            label(for="login", class="form-label") Логин пользователя
+          p   
+            input#login(type="text", name="login", class="form-control")  
+          p 
+            label(for="test_id", class="form-label") Идентификатор теста 
+          p 
+            input#test_id(type="text", name="test_id", class="form-control")
+          p 
+            button(type="submit", class="btn my-link-confirm my-form-link") Принять
+        div(id="search_container")
 
 
 
@@ -32,20 +35,20 @@ block content
           .then(resp => {
               for(let i = 0; i < resp.data.tests.length; i++) 
                 $('#search_container').append(
-                  `<p>
-                    <a href="/test/find/${resp.data.login}">
+                  `<div class="my-container">
+                    <a href="/test/find/${resp.data.login}" class="btn my-link-confirm">
                       ${resp.data.login}
                     </a>
-                    <a href="/test/${resp.data.tests[i].id}">
+                    <a href="/test/${resp.data.tests[i].id}" class="btn my-link-confirm">
                       Тест #${resp.data.tests[i].id}
                     </a>
-                    <a href="/admin/test/edit/${resp.data.tests[i].id}">
+                    <a href="/admin/test/edit/${resp.data.tests[i].id}" class="btn my-link-confirm">
                       Редактировать
                     </a>
-                    <a href="/admin/test/delete/${resp.data.tests[i].id}">
+                    <a href="/admin/test/delete/${resp.data.tests[i].id}" class="btn my-link-confirm">
                       Удалить
                     </a>
-                  </p>`);
+                  </div>`);
               
           })
        

@@ -2,4 +2,4 @@ extends ../layout
 block content 
   h3 Вы действительно хотите удалить тест ##{test.id}?
   form(action="/test/delete/"+test.id, method="post")
-    button(type="submit") Подтвердить 
+    button(type="submit", class="btn my-link-confirm") Подтвердить 

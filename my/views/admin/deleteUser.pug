@@ -2,4 +2,4 @@ extends adminLayout
 block content 
   h3 Вы действительно хотите удалить аккаунт #{user.login}?
   form(action="/admin/user/delete/" + user.login, method="post")
-    button(type="submit") Подтвердить 
+    button(type="submit", class="btn my-link-confirm") Подтвердить 

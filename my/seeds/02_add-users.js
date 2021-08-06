@@ -5,12 +5,21 @@ exports.seed = function(knex) {
   return knex('users').del()
     .then(function () {
       // Inserts seed entries
-      return knex.insert({
+      return knex.insert([
+      {
         login: 'admin',
         password: bcrypt.hashSync('12345', 7),
         name: 'Alexander',
         surname: 'Rud',
         role_title: 'Administrator'
-      }).into('users');
+      },
+      {
+        login: 'user',
+        password: bcrypt.hashSync('12345', 7),
+        name: 'Alexander',
+        surname: 'Rud',
+        role_title: 'Operator'
+      }
+      ]).into('users');
     });
 };

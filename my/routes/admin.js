@@ -280,9 +280,14 @@ router.post('/search/users', adminAuth, async function(req, res, next){
   if (form.surname){
     query.surname = form.surname
   }
-  
-  users = await mydb.getUsersByQuery(query) || [];
 
+  if (!query.login && !query.name && !query.surname){
+    users = [];
+  }
+  else{
+    users = await mydb.getUsersByQuery(query) || [];
+  }
+  
   context = {
     users: users
   }
@@ -303,10 +308,15 @@ router.post('/search/results/', adminAuth, async function(req, res, next){
     query.examinee_login = form.login
   }
   if (form.test_id){
-    query.test_id = form.test_id
+    query.test_id = form.test_id;
   }
   
-  results = await mydb.getResultsByQuery(query);
+  if (!query.test_id && !query.examinee_login){
+    results = [];
+  }
+  else{
+    results = await mydb.getResultsByQuery(query) || [];
+  }
 
   context = {
     results: results

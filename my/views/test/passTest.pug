@@ -3,20 +3,22 @@ block append head
   script(src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous")
   script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
 block content 
-  form(action="/test/pass/"+test.id, method="post") 
+  h1 Тест ##{test.id}
+  form(action="/test/pass/"+test.id, method="post", class="my-form") 
     ul
       each question in test.content
-        li= question.question_text
+        li
+          h4 #{question.question_text}
           if question.question_type == 'text'
             p
-              input#text_answer(type="text", name="text_answer_"+question.question_id, placeholder='Текстовый ответ')
+              input#text_answer(type="text", name="text_answer_"+question.question_id, placeholder='Текстовый ответ', class="col-form-control col-sm-5")
           else if question.question_type == 'test'
             each test_answer in question.question_test_answers
-              p
+              .form-check
                 //li= test_answer.test_answer_text
-                input#checkbox(type="checkbox", name="checkbox_" + question.question_id + '_' + test_answer.test_answer_id)
+                input#checkbox(type="checkbox", name="checkbox_" + question.question_id + '_' + test_answer.test_answer_id, class="form-check-input")
                 span= test_answer.test_answer_text
-    button(type="submit") Отправить
+    button(type="submit", class="btn my-link-confirm") Отправить
     
                 
     

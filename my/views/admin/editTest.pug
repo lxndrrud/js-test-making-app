@@ -1,40 +1,39 @@
 extends adminLayout 
 block content 
-  form(action="/admin/test/edit/" + test.id, method="post", id='myForm')
-    input#creator_login(type="text", name="creator_login", value=`${test.creator_login}`, placeholder='Логин автора', required)
-    button(id="buttonAddQuestion") Добавить вопрос
-    button(type="submit") Принять
+  form(action="/admin/test/edit/" + test.id, method="post", id='myForm', class="my-form")
+    input#creator_login(type="text", name="creator_login", value=`${test.creator_login}`, placeholder='Логин автора', class="col-form-control col-sm-5", required)
+    p
+      button(id="buttonAddQuestion" class="btn my-link-success") Добавить вопрос
+      button(type="submit" class="btn my-link-confirm") Принять
     div(id='mainContainer')
       each question in test.content 
-        div(id=`container${question.question_id}`, name="container", counter=`${question.question_id}`, class='container')
-          select(id=`selectQuestionType${question.question_id}`, name="selectQuestionType", counter=`${question.question_id}`)
+        div(id=`container${question.question_id}`, name="container", counter=`${question.question_id}`, class='my-container')
+          select(id=`selectQuestionType${question.question_id}`, name="selectQuestionType", class="col-form-select col-sm-5", counter=`${question.question_id}`)
             if question.question_type == 'test'
               option(value="test", checked) Тестовый вопрос
-              //option(value="text") Текстовый вопрос
+              option(value="text") Текстовый вопрос
             else if question.question_type == 'text'
-              //option(value="text", checked) Текстовый вопрос
+              option(value="text", checked) Текстовый вопрос
               option(value="test") Тестовый вопрос
-          button(id=`buttonDeleteQuestion${question.question_id}`, name="buttonDeleteQuestion", counter=`${question.question_id}`) Удалить вопрос  
+          button(id=`buttonDeleteQuestion${question.question_id}`, name="buttonDeleteQuestion", class="btn my-link-danger", counter=`${question.question_id}`) Удалить вопрос  
           p 
-            label(for=`question${question.question_id}`) Текст вопроса
-          p 
-            input(type="text", id=`question${question.question_id}`, name="question", counter=`${question.question_id}`, value=question.question_text, placeholder="Введите текст вопроса",required)
+            input(type="text", id=`question${question.question_id}`, name="question", class="col-form-control col-sm-5", counter=`${question.question_id}`, value=question.question_text, placeholder="Введите текст вопроса",required)
           div(id = `questionTypeContent${question.question_id}`, name="questionTypeContent", counter=`${question.question_id}`)
             if question.question_type == 'text'
               p 
-                input(type="text", name="textAnswer", id=`textAnswer${question.question_id}`, value=question.question_text_answer,placeholder='Введите текст ответа', required)
+                input(type="text", name="textAnswer", id=`textAnswer${question.question_id}`, class="col-form-control col-sm-5", value=question.question_text_answer,placeholder='Введите текст ответа', required)
             else if question.question_type == 'test'
               p
-                button(id=`buttonAddTestAnswer${question.question_id}`, name="buttonAddTestAnswer", counter=`${question.question_id}`) Добавить вариант ответа
+                button(id=`buttonAddTestAnswer${question.question_id}`, name="buttonAddTestAnswer", class="btn my-link-success", counter=`${question.question_id}`) Добавить вариант ответа
                 div(id=`paragraphContainer${question.question_id}`, name="paragraphContainer", counter=`${question.question_id}`)
                   each test_answer in question.question_test_answers 
                     p(id=`paragraph${question.question_id}_${test_answer.test_answer_id}`, name="paragraph", counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`)
-                      input(type="text", name="testAnswer", id=`testAnswer${question.question_id}_${test_answer.test_answer_id}`, counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`, value=test_answer.test_answer_text, placeholder='Текст варианта ответа', required)
+                      input(type="text", name="testAnswer", id=`testAnswer${question.question_id}_${test_answer.test_answer_id}`, class="col-form-control col-sm-5", counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`, value=test_answer.test_answer_text, placeholder='Текст варианта ответа', required)
                       if test_answer.test_answer_is_correct
-                        input(type="checkbox", name="checkboxTestAnswer", id=`checkboxTestAnswer${question.question_id}_${test_answer.test_answer_id}`, counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`, checked)
+                        input(type="checkbox", name="checkboxTestAnswer", id=`checkboxTestAnswer${question.question_id}_${test_answer.test_answer_id}`, class="form-check-input", counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`, checked)
                       else 
-                        input(type="checkbox", name="checkboxTestAnswer", id=`checkboxTestAnswer${question.question_id}_${test_answer.test_answer_id}`, counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`)
-                      button(id=`buttonDeleteTestAnswer${question.question_id}_${test_answer.test_answer_id}`, name="buttonDeleteTestAnswer", counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`) Удалить вариант ответа
+                        input(type="checkbox", name="checkboxTestAnswer", id=`checkboxTestAnswer${question.question_id}_${test_answer.test_answer_id}`, class="form-check-input", counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`)
+                      button(id=`buttonDeleteTestAnswer${question.question_id}_${test_answer.test_answer_id}`, name="buttonDeleteTestAnswer", class="btn my-link-danger",counter=`${question.question_id}`, subcounter=`${test_answer.test_answer_id}`) Удалить вариант ответа
                   
                       
 
@@ -125,30 +124,27 @@ block content
       $('#myForm').submit(async function(event){
         event.preventDefault();
         formData = fillFormData();
-        var context = {
-          creator_login: $('#creator_login').val(),
-          content: formData
-        };
-        await axios.post(`http://localhost/admin/test/edit/${test.id}`, context);
-        $(window).attr('location', '/admin');
+        console.log(formData);
+        await axios.post('http://localhost/test/make', formData);
+        $(window).attr('location', '/');
       });
       $('#buttonAddQuestion').click( function (){
         let counter = getCounterAndIncrement('questions');
         $('#mainContainer').append(`
-          <div id='container${counter}' class="container" name="container" counter="${counter}">
+          <div id='container${counter}' class="my-container" name="container" counter="${counter}">
             <p>
-              <select id="selectQuestionType${counter}" name="selectQuestionType" counter="${counter}">
-                <option value="test">Тестовый вопрос</option>
-                <!--option value="text">Текстовый вопрос</option-->
+              <select id="selectQuestionType${counter}" name="selectQuestionType" counter="${counter}" class="col-form-select col-sm-5">
+                <option value="test" checked>Тестовый вопрос</option>
+                <option value="text">Текстовый вопрос</option>
               </select>
-              <button id="buttonDeleteQuestion${counter}" name="buttonDeleteQuestion" counter="${counter}">Удалить вопрос</button>
+              <button id="buttonDeleteQuestion${counter}" name="buttonDeleteQuestion" counter="${counter}" class="btn my-link-danger">Удалить вопрос</button>
             </p>
-            <p>
-              <input type="text" id="question${counter}" placeholder="Введите текст вопроса" required>
+            <p>  
+              <input type="text" id="question${counter}" placeholder="Введите текст вопроса" class="col-form-control col-sm-5" required>
             </p>
             <div id="questionTypeContent${counter}" name="questionTypeContent" counter="${counter}">
               <p>
-                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" counter="${counter}" type="button">Добавить тестовый ответ</button>
+                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" class="btn my-link-success" counter="${counter}" type="button">Добавить тестовый ответ</button>
               </p>
               <div id="paragraphContainer${counter}" name="paragraphContainer" counter="${counter}"></div>
             </div>
@@ -159,9 +155,9 @@ block content
         let testAnswerCounter = getCounterAndIncrement("testAnswers", counter);
         $('#paragraphContainer'+counter).append(`
           <p id="paragraph${counter}_${testAnswerCounter}" name="paragraph" counter="${counter}" subcounter="${testAnswerCounter}">
-            <input type="text" id="testAnswer${counter}_${testAnswerCounter}" name="testAnswer" placeholder="Введите текст варианта ответа" required counter="${counter}" subcounter="${testAnswerCounter}">
-            <input type="checkbox" id="checkboxTestAnswer${counter}_${testAnswerCounter}" name="checkboxTestAnswer" counter="${counter}" subcounter="${testAnswerCounter}">
-            <button id="buttonDeleteTestAnswer${counter}_${testAnswerCounter}" name="buttonDeleteTestAnswer" counter="${counter}" subcounter="${testAnswerCounter}">Удалить вариант ответа</button>
+            <input type="text" id="testAnswer${counter}_${testAnswerCounter}" name="testAnswer" placeholder="Введите текст варианта ответа" class="col-form-control col-sm-5" required counter="${counter}" subcounter="${testAnswerCounter}">
+            <input type="checkbox" id="checkboxTestAnswer${counter}_${testAnswerCounter}" name="checkboxTestAnswer" class="form-check-input" counter="${counter}" subcounter="${testAnswerCounter}">
+            <button id="buttonDeleteTestAnswer${counter}_${testAnswerCounter}" name="buttonDeleteTestAnswer" class="btn my-link-danger" counter="${counter}" subcounter="${testAnswerCounter}">Удалить вариант ответа</button>
           </p>
         `);
       });
@@ -182,16 +178,18 @@ block content
           case 'test':
             $(`#questionTypeContent${counter}`).append(`
               <p>
-                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" counter="${counter}" type="button">Добавить тестовый ответ</button>
+                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" class="btn my-link-success" counter="${counter}" type="button">Добавить тестовый ответ</button>
               </p>
               <div id="paragraphContainer${counter}" name="paragraphContainer" counter="${counter}"></div>
             `);
             break;
           case 'text':
             $(`#questionTypeContent${counter}`).append(`
-              <input id="textAnswer${counter}" name="textAnswer" counter="${counter}" placeholder="Введите текст ответа" required>
+              <p>
+                <input id="textAnswer${counter}" name="textAnswer" class="col-form-control col-sm-5" counter="${counter}" placeholder="Введите текст ответа" required>
+              </p>
             `);
             break;
         }
       });
-    });    
+    }); 

@@ -12,7 +12,7 @@ function getCookie(name) {
 var body = document.getElementsByTagName("body")[0];
 
 $(".nav").append(`
-    <a href="/" class="btn my-link col">
+    <a href="/" class="btn my-link-confirm col">
         Главная
     </a>
 `);
@@ -21,19 +21,19 @@ $(".nav").append(`
 if (getCookie('TOKEN')){
 
   $(".nav").append(`
-        <a href="/admin/" class="btn my-link col">
+        <a href="/admin/" class="btn my-link-confirm col">
           Администраторская
         </a>
-        <a href="/admin/user/create" class="btn my-link col">
+        <a href="/admin/user/create" class="btn my-link-confirm col">
             Создать пользователя
         </a>
-        <a href="/admin/test/create" class="btn my-link col">
+        <a href="/admin/test/create" class="btn my-link-confirm col">
             Создать тест
         </a>
-        <a href="/admin/search" class="btn my-link col">
+        <a href="/admin/search" class="btn my-link-confirm col">
             Поиск
         </a>
-        <a href="/users/logout" class="btn my-link-danger col">
+        <a href="/users/logout" class="btn my-link-confirm col">
             Выйти
         </a>
         
@@ -42,10 +42,10 @@ if (getCookie('TOKEN')){
 } else {
   // ссылки регистрации и входа
   $(".nav").append(`
-        <a href="/users/register" class="btn my-link-danger col">
+        <a href="/users/register" class="btn my-link-confirm col">
             Зарегистрироваться
         </a>
-        <a href="/users/login" class="btn my-link-danger col">
+        <a href="/users/login" class="btn my-link-confirm col">
             Войти
         </a>
   `);

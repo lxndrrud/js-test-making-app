@@ -4,9 +4,12 @@ const auth = require('../middleware/auth');
 const checkPermissions = require('../middleware/permissionCheck');
 const mydb = require('../dbHelpers');
 
+router.get('/', auth, (req, res, next) => {
+    res.render('test/testIndex');
+});
 
 router.get('/make', auth, (req, res, next) => {
-    res.render('test/test.pug', {});
+    res.render('test/testMake', {});
 });
 
 router.post('/make', auth, async function(req, res, next) {
@@ -19,16 +22,40 @@ router.post('/make', auth, async function(req, res, next) {
     res.redirect('../');   
 });
 
+router.get('/search', auth, async function(req, res, next){
+    console.log('kekekek')
+    res.render('test/searchTest', {});
+});
+
+router.post('/search', auth, async function(req, res, next){
+    var form = req.body;
+    var tests = [];
+    var context = {};
+    if (form.test_id){
+        tests = await mydb.getTestById(form.test_id);
+    }
+    if (!tests){
+        context = {
+        tests: []
+        }
+    }
+    else {
+        context = {
+            tests: tests
+        } 
+    }
+
+    res.status(200).send(context);
+});
+
 router.get('/find/:login', auth, async function(req, res, next) {
-    console.log(req.params.login);
-    console.log(req.cookies['LOGIN']);
     if (req.params.login === req.cookies['LOGIN'] || req.signedCookies['ROLE' === 'Administrator']){
         testList = await mydb.getTestsByUserLogin(req.cookies['LOGIN']);
         console.log(testList);
         res.render('test/userTests', {testList: testList, login: req.cookies['LOGIN']});
     }
     else{
-        res.redirect('../');
+        res.redirect('/');
     }
 });
 

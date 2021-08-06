@@ -3,7 +3,7 @@ extends ../layout
 block content
   h1 Создайте Тест
   form(action="/test/make", method="post", id="myForm" class="my-form")
-    button(id="buttonAddQuestion" class="btn my-link") Добавить вопрос
+    button(id="buttonAddQuestion" class="btn my-link-success") Добавить вопрос
     button(type="submit" class="btn my-link-confirm") Принять
     div(id='mainContainer')
 
@@ -93,7 +93,6 @@ block content
     $(document).ready(function() {
       $('#myForm').submit(async function(event){
         event.preventDefault();
-        console.log('.submit() called!!!');
         formData = fillFormData();
         console.log(formData);
         await axios.post('http://localhost/test/make', formData);
@@ -105,17 +104,17 @@ block content
           <div id='container${counter}' class="my-container" name="container" counter="${counter}">
             <p>
               <select id="selectQuestionType${counter}" name="selectQuestionType" counter="${counter}" class="col-form-select col-sm-5">
-                <option value="test">Тестовый вопрос</option>
-                <!--option value="text">Текстовый вопрос</option-->
+                <option value="test" checked>Тестовый вопрос</option>
+                <option value="text">Текстовый вопрос</option>
               </select>
               <button id="buttonDeleteQuestion${counter}" name="buttonDeleteQuestion" counter="${counter}" class="btn my-link-danger">Удалить вопрос</button>
             </p>
-            <p class="col-sm-5">
-              <input type="text" id="question${counter}" placeholder="Введите текст вопроса" class="form-control" required>
+            <p>  
+              <input type="text" id="question${counter}" placeholder="Введите текст вопроса" class="col-form-control col-sm-5" required>
             </p>
             <div id="questionTypeContent${counter}" name="questionTypeContent" counter="${counter}">
               <p>
-                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" class="btn my-link" counter="${counter}" type="button">Добавить тестовый ответ</button>
+                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" class="btn my-link-success" counter="${counter}" type="button">Добавить тестовый ответ</button>
               </p>
               <div id="paragraphContainer${counter}" name="paragraphContainer" counter="${counter}"></div>
             </div>
@@ -127,7 +126,7 @@ block content
         $('#paragraphContainer'+counter).append(`
           <p id="paragraph${counter}_${testAnswerCounter}" name="paragraph" counter="${counter}" subcounter="${testAnswerCounter}">
             <input type="text" id="testAnswer${counter}_${testAnswerCounter}" name="testAnswer" placeholder="Введите текст варианта ответа" class="col-form-control col-sm-5" required counter="${counter}" subcounter="${testAnswerCounter}">
-            <input type="checkbox" id="checkboxTestAnswer${counter}_${testAnswerCounter}" name="checkboxTestAnswer" counter="${counter}" subcounter="${testAnswerCounter}">
+            <input type="checkbox" id="checkboxTestAnswer${counter}_${testAnswerCounter}" name="checkboxTestAnswer" class="form-check-input" counter="${counter}" subcounter="${testAnswerCounter}">
             <button id="buttonDeleteTestAnswer${counter}_${testAnswerCounter}" name="buttonDeleteTestAnswer" class="btn my-link-danger" counter="${counter}" subcounter="${testAnswerCounter}">Удалить вариант ответа</button>
           </p>
         `);
@@ -149,16 +148,18 @@ block content
           case 'test':
             $(`#questionTypeContent${counter}`).append(`
               <p>
-                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" counter="${counter}" type="button">Добавить тестовый ответ</button>
+                <button id="buttonAddTestAnswer${counter}" name="buttonAddTestAnswer" class="btn my-link-success" counter="${counter}" type="button">Добавить тестовый ответ</button>
               </p>
               <div id="paragraphContainer${counter}" name="paragraphContainer" counter="${counter}"></div>
             `);
             break;
           case 'text':
             $(`#questionTypeContent${counter}`).append(`
-              <input id="textAnswer${counter}" name="textAnswer" counter="${counter}" placeholder="Введите текст ответа" required>
+              <p>
+                <input id="textAnswer${counter}" name="textAnswer" class="col-form-control col-sm-5" counter="${counter}" placeholder="Введите текст ответа" required>
+              </p>
             `);
             break;
         }
       });
-    });
+    });  

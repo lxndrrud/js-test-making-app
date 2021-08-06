@@ -1,21 +1,24 @@
 extends adminLayout 
 block content
-  form(method="post", id='query', name="query")
-    p 
-      label(for="login") Логин пользователя
-    p   
-      input#login(type="text", name="login")  
-    p 
-      label(for="name") Имя пользователя
-    p 
-      input#name(type="text", name="name")
-    p 
-      label(for="surname") Фамилия пользователя
-    p 
-      input#surname(type="text", name="surname")
-    p 
-      button(type="submit") Принять
-  div(id="search_container")
+  .container-lg
+    div(class="row justify-content-center align-items-center")
+        .col-4 
+          form(method="post", id='query', name="query", class="my-form")
+            p 
+              label(for="login", class="form-label") Логин пользователя
+            p   
+              input#login(type="text", name="login", class="form-control")  
+            p 
+              label(for="name", class="form-label") Имя пользователя
+            p 
+              input#name(type="text", name="name", class="form-control")
+            p 
+              label(for="surname", class="form-label") Фамилия пользователя
+            p 
+              input#surname(type="text", name="surname", class="form-control")
+            p 
+              button(type="submit", class="btn my-link-confirm my-form-link") Принять
+          div(id="search_container")
 
   script.
 
@@ -35,17 +38,17 @@ block content
           .then(resp => {
               for(let i = 0; i < resp.data.users.length; i++) 
                 $('#search_container').append(
-                  `<p>
-                    <a href="/test/find/${resp.data.users[i].login}">
+                  `<div class="my-container">
+                    <a href="/test/find/${resp.data.users[i].login}" class="btn my-link-confirm">
                       ${resp.data.users[i].login} - ${resp.data.users[i].name} ${resp.data.users[i].surname}
                     </a>
-                    <a href="/admin/user/edit/${resp.data.users[i].login}">
+                    <a href="/admin/user/edit/${resp.data.users[i].login}" class="btn my-link-confirm">
                       Редактировать
                     </a>
-                    <a href="/admin/user/delete/${resp.data.users[i].login}">
+                    <a href="/admin/user/delete/${resp.data.users[i].login}" class="btn my-link-confirm">
                       Удалить
                     </a>
-                  </p>`);
+                  </div>`);
               
           })
 
