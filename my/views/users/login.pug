@@ -5,9 +5,11 @@ block content
             .col-4
                 form(action="/users/login", method="post" class="my-form") 
                     p
+                        // for ищет id, но его нет
                         label(for="login" class="form-label") Логин
                     p
-                        input#name(type="text", name="login" class="form-control")
+                        // Сначала аттрибуты, потом все остальное, т.е. скобки в начале
+                        input(type="text", name="login" class="form-control")#name
                     p 
                         label(for="password" class="form-label") Пароль
                     p
