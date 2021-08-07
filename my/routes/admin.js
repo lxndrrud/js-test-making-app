@@ -4,6 +4,12 @@ const mydb = require('../dbHelpers');
 const bcrypt = require('bcryptjs');
 const adminAuth = require('../middleware/adminAuth');
 
+/*
+* | ЭТОТ ФАЙЛ
+* | ЧИТАЙ
+* | С НИЗУ ВВЕРХ (просто, я начал в таком прядке почему-то комментировать =) )
+*/
+
 /* Админка */
 router.get('/', adminAuth, async function(req, res, next) {
   res.render('admin/adminIndex', {});
@@ -25,9 +31,10 @@ router.post('/user/create', adminAuth, async function(req, res, next){
       role_title: form.role_title
     };
     var checkArray = await mydb.checkUser(data.login);
-    if (checkArray[0]){
+
+    if (checkArray[0]) // можно упростить
       return res.status(409).send('Пользователь с таким логином уже существует!');
-    }
+
     if (data.password === data.passwordConfirm){
       const newUser = {
         login: data.login, 
@@ -137,7 +144,7 @@ router.get('/test/edit/:test_id', adminAuth, async function(req, res, next){
 
 router.post('/test/edit/:test_id', adminAuth, async function(req, res, next){
   try{
-    form = req.body;
+    form = req.body; // забыл объявить переменную
     if (req.params.test_id){
       let context = {
         creator_login: form.creator_login,
@@ -180,6 +187,8 @@ router.post('/test/delete/:test_id', adminAuth, async function(req, res, next){
 });
 
 router.get('/result/edit/:result_id', adminAuth, async function(req,res, next){
+    // Слишком большая вложенность, стараться либо упростить до читемого вида, либо
+    // упростить по логике
   try{
     if (req.params.result_id){
       var resultInfo = await mydb.getResultByResultId(req.params.result_id);
@@ -199,24 +208,27 @@ router.get('/result/edit/:result_id', adminAuth, async function(req,res, next){
 });
 
 router.post('/result/edit/:result_id', adminAuth, async function(req, res, next){
-  try{
-    form = req.body;
+  // Здесь можно обойтесь без try-catch блока
+    const form = req.body;
     var data = {
       examinee_login: form.examinee_login,
       test_id: parseInt(form.test_id),
       result_points: parseFloat(form.result_points)
     };
-    await mydb.editResult(data, req.params.result_id);
-    res.redirect('/admin');
-  } catch(err){
-    console.log(err);
-  }
+    // Так как это promise, у него в цепи есть then,
+    // Которые срабатывает когда все хорошо и
+    // catch, соответственно, когда все плохо
+    await mydb.editResult(data, req.params.result_id)
+        .then(() => { res.redirect('/admin'); })
+        .catch((err) => { console.log(err)})
+
+
 });
 
 router.get('/result/delete/:result_id', adminAuth, async function(req, res, next){
   var result = (await mydb.getResultByResultId(req.params.result_id))[0];
-  console.log(result);
-  if (!result){
+  console.log(result); // Не забываем убирать, в проде будет лишняя нагрузка
+  if (!result){ // можно упростить, как указал ниже, а так же пробел перед фигурной скобкой
     res.redirect('/admin');
   }
   else{
@@ -267,39 +279,30 @@ router.get('/search/users', adminAuth, function(req, res, next){
 });
 
 router.post('/search/users', adminAuth, async function(req, res, next){
-  var form = req.body;
-  var users = [];
-  var context = {};
-  var query = {};
-  if (form.login){
-    query.login = form.login
-  }
-  if (form.name){
-    query.name = form.name
-  }
-  if (form.surname){
-    query.surname = form.surname
-  }
+  // form получен как параметр и значит меняеться не может - const,
+  const form = req.body;
+  // нет потребности в var, вполне хватит let
+  let users = [],
+      context = {},
+      query = {};
+  // Если if можно описать в одну строку, тогда фигруныве скобки не нужны
+  if (form.login) query.login = form.login
+  if (form.name) query.name = form.name
+  if (form.surname) query.surname = form.surname
 
-  if (!query.login && !query.name && !query.surname){
-    users = [];
-  }
-  else{
-    users = await mydb.getUsersByQuery(query) || [];
-  }
-  
-  context = {
-    users: users
-  }
-
-  res.status(200).send(context);
+  if (!query.login && !query.name && !query.surname)  users = [];
+  else users = await mydb.getUsersByQuery(query) || [];
+  // Не совсем понял зачем тут объект, но если понадобился - то можно упростить
+  res.status(200).send({users: users})
 });
 
 router.get('/search/results/', adminAuth, async function(req, res, next){
   res.render('admin/searchResults', {});
 })
 
-router.post('/search/results/', adminAuth, async function(req, res, next){
+// Ставим пробел перед фигурной скобкой, а так же можно упростить до стрелочной функции
+router.post('/search/results/', adminAuth, async (req, res, next) => {
+  // Тут все тоже, что и выше
   var form = req.body;
   var results = [];
   var context = {};

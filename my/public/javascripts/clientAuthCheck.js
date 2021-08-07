@@ -1,3 +1,8 @@
+const nav = $(".nav")
+// Не пвторяем jquery елементы, загоняем их в переменную и потом используем
+// Здесь можно использовать объявление глобально, так как ты используешь это и вне функций
+
+
 function getCookie(name) {
     var nameEQ = name + "=";
     var ca = document.cookie.split(';');
@@ -10,7 +15,7 @@ function getCookie(name) {
 }
 
 
-$(".nav").append(`
+nav.append(`
     <a href="/" class="btn my-link-confirm col">
         Главная
     </a>
@@ -19,7 +24,7 @@ $(".nav").append(`
 
 if (getCookie('TOKEN')){
     // ссылки на создание теста, просмотр своих тестов и выход
-    $(".nav").append(`
+    nav.append(`
         <a href="/test/" class="btn my-link-confirm col">
             Тесты
         </a>
@@ -33,12 +38,12 @@ if (getCookie('TOKEN')){
             Выйти
         </a>
         
-    `);  
+    `); // Очень хорошо, что ты знаешь про интерполяцию строки!
 
 } else {
     // ссылки регистрации и входа
 
-    $(".nav").append(`
+    nav.append(`
         <a href="/users/register" class="btn my-link-confirm col">
             Зарегистрироваться
         </a>

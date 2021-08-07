@@ -32,7 +32,7 @@ exports.up = function(knex, Promise) {
     tbl.float('result_points', 14, 10).notNullable();
   });
 
-  
+  // В идеале для кажой таблицы своя миграция
 };
 
 exports.down = function(knex) {

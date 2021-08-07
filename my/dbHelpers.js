@@ -2,8 +2,12 @@ const knex = require('knex');
 const config = require('./knexfile');
 const db = knex(config.development);
 
-async function registerUser(newUser){
-    return await db.insert(newUser).into('users');
+// Здесь нет необходимости использовать асинхрон
+// Так же не хранить все модели в одном файле, для этого есть папка models
+// Где разбиваем на файлы по логике
+
+function registerUser(newUser){
+    return db.insert(newUser).into('users');
     /*
     .then(()=>{console.log(returnValue); return returnValue })
     .catch((err) => {console.log(err); throw err});
