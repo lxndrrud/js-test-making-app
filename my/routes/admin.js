@@ -114,8 +114,8 @@ router.get('/test/create', adminAuth, function(req, res, next) {
 router.post('/test/create', adminAuth, async function(req, res, next) {
   // зарегистрировать тест на пользователя
   const newTest = {
-    creator_login: req.body.creator,
-    content: JSON.stringify(req.body.questionsFormArray)
+    creator_login: req.body.creator_login,
+    content: JSON.stringify(req.body.content)
   };
   await mydb.createTest(newTest);
 
@@ -188,28 +188,22 @@ router.post('/test/delete/:test_id', adminAuth, async function(req, res, next){
 router.get('/result/edit/:result_id', adminAuth, async function(req,res, next){
     // Слишком большая вложенность, стараться либо упростить до читемого вида, либо
     // упростить по логике
-  try{
-    if (req.params.result_id){
-      var resultInfo = await mydb.getResultByResultId(req.params.result_id);
-      if (resultInfo){
-        res.render('admin/editResult', {resultInfo: resultInfo[0]});
-      }
-      else{
-        res.redirect('/admin');
-      }
-    }
-    else{
+
+  if (req.params.result_id){
+    var resultInfo = await mydb.getResultByResultId(req.params.result_id);
+    if (resultInfo)
+      res.render('admin/editResult', {resultInfo: resultInfo[0]});
+    else
       res.redirect('/admin');
-    }
-  } catch(err){
-    console.log(err);
   }
+  else
+    res.redirect('/admin');
 });
 
 router.post('/result/edit/:result_id', adminAuth, async function(req, res, next){
   // Здесь можно обойтесь без try-catch блока
     const form = req.body;
-    var data = {
+    const data = {
       examinee_login: form.examinee_login,
       test_id: parseInt(form.test_id),
       result_points: parseFloat(form.result_points)
@@ -225,7 +219,7 @@ router.post('/result/edit/:result_id', adminAuth, async function(req, res, next)
 });
 
 router.get('/result/delete/:result_id', adminAuth, async function(req, res, next){
-  var result = (await mydb.getResultByResultId(req.params.result_id))[0];
+  const result = (await mydb.getResultByResultId(req.params.result_id))[0];
   // можно упростить, как указал ниже, а так же пробел перед фигурной скобкой
   if (!result) res.redirect('/admin');
   else res.render('admin/deleteResult', {result: result});
@@ -245,9 +239,9 @@ router.get('/search/tests', adminAuth, function(req, res, next){
 });
 
 router.post('/search/tests', adminAuth, async function(req, res, next){
-  var form = req.body;
-  var tests = [];
-  var context = {};
+  const form = req.body;
+  let tests = [],
+   context = {};
   if (form.login && !form.test_id) 
     tests = await mydb.getTestsByUserLogin(form.login);
   else if (form.test_id) 
@@ -296,24 +290,18 @@ router.get('/search/results/', adminAuth, async function(req, res, next){
 // Ставим пробел перед фигурной скобкой, а так же можно упростить до стрелочной функции
 router.post('/search/results/', adminAuth, async (req, res, next) => {
   // Тут все тоже, что и выше
-  var form = req.body;
-  var results = [];
-  var context = {};
-  var query = {};
-  if (form.login){
+  const form = req.body;
+  let results = [],
+    context = {};
+    query = {};
+  if (form.login)
     query.examinee_login = form.login
-  }
-  if (form.test_id){
+  if (form.test_id)
     query.test_id = form.test_id;
-  }
-  
-  if (!query.test_id && !query.examinee_login){
+  if (!query.test_id && !query.examinee_login)
     results = [];
-  }
-  else{
+  else
     results = await mydb.getResultsByQuery(query) || [];
-  }
-
   context = {
     results: results
   }

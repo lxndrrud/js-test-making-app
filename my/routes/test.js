@@ -17,26 +17,24 @@ router.post('/make', auth, async function(req, res, next) {
         creator_login: req.cookies['LOGIN'],
         content: JSON.stringify(req.body)
     }
-    console.log(req.body);
     await mydb.createTest(newTest);
     res.redirect('../');   
 });
 
 router.get('/search', auth, async function(req, res, next){
-    console.log('kekekek')
     res.render('test/searchTest', {});
 });
 
 router.post('/search', auth, async function(req, res, next){
-    var form = req.body;
-    var tests = [];
-    var context = {};
+    const form = req.body;
+    let tests = [],
+        context = {};
     if (form.test_id){
         tests = await mydb.getTestById(form.test_id);
     }
     if (!tests){
         context = {
-        tests: []
+            tests: []
         }
     }
     else {
@@ -50,13 +48,10 @@ router.post('/search', auth, async function(req, res, next){
 
 router.get('/find/:login', auth, async function(req, res, next) {
     if (req.params.login === req.cookies['LOGIN'] || req.signedCookies['ROLE' === 'Administrator']){
-        testList = await mydb.getTestsByUserLogin(req.cookies['LOGIN']);
-        console.log(testList);
+        let testList = await mydb.getTestsByUserLogin(req.cookies['LOGIN']);
         res.render('test/userTests', {testList: testList, login: req.cookies['LOGIN']});
     }
-    else{
-        res.redirect('/');
-    }
+    else res.redirect('/');
 });
 
 router.get('/results', auth, async function(req, res, next){
@@ -67,13 +62,10 @@ router.get('/results', auth, async function(req, res, next){
 router.get('/:test_id', auth, async function(req, res, next){
     const testInfo = (await mydb.getTestById(req.params.test_id))[0];
 
-    if (!testInfo){
-        res.redirect('../');
-    }
+    if (!testInfo)
+        res.redirect('/');
     else{
         const questionsList = testInfo.content;
-        console.log(testInfo);
-        console.log(questionsList);
         const context = {
             login: req.cookies['LOGIN'], 
             testInfo: testInfo, 
@@ -85,13 +77,10 @@ router.get('/:test_id', auth, async function(req, res, next){
 
 router.get('/delete/:test_id', auth, async function(req, res, next){
     var test = (await mydb.getTestById(req.params.test_id))[0];
-    console.log(test);
-    if (!test || test.creator_login !== req.cookies['LOGIN']){
-        res.redirect('../');
-    }
-    else{
+    if (!test || test.creator_login !== req.cookies['LOGIN']) 
+        res.redirect('/');
+    else 
         res.render('test/deleteTest', {test: test});
-  }
 });
 
 router.post('/delete/:test_id', auth, async function(req, res, next){
@@ -101,12 +90,10 @@ router.post('/delete/:test_id', auth, async function(req, res, next){
 
 router.get('/pass/:test_id', auth, async function(req, res, next){
     var test = (await mydb.getTestById(req.params.test_id))[0];
-    if (!test){
-        res.redirect('../');
-    }
-    else{
-        res.render('test/passTest', {test: test})
-    }
+    if (!test) 
+        res.redirect('/');
+    else 
+        res.render('test/passTest', {test: test});
 });
 
 function parseForm(form, test){
@@ -145,10 +132,10 @@ function parseForm(form, test){
 }
 
 router.post('/pass/:test_id', auth, async function(req, res, next){
-    var form = req.body;
-    var test = (await mydb.getTestById(req.params.test_id))[0];
+    const form = req.body;
+    const test = (await mydb.getTestById(req.params.test_id))[0];
 
-    var result_points = parseForm(form, test);
+    const result_points = parseForm(form, test);
     const result = {
         examinee_login: req.cookies['LOGIN'],
         test_id: req.params.test_id, 

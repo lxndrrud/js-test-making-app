@@ -98,8 +98,11 @@ block content
         event.preventDefault();
         formData = fillFormData();
         console.log(formData);
-        await axios.post('http://localhost/test/make', formData);
-        $(window).attr('location', '/');
+        await axios.post('http://localhost/admin/test/create', {
+          creator_login: $('#creator_login').val(),
+          content: formData
+        });
+        $(window).attr('location', '/admin');
       });
       $('#buttonAddQuestion').click( function (){
         let counter = getCounterAndIncrement('questions');

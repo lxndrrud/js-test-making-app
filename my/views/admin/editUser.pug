@@ -29,8 +29,9 @@ block content
                                 option(value="Administrator", checked) Администратор
                                 option(value="Operator") Оператор
                             else if userInfo.role_title == 'Operator'
-                                option(value="Administrator") Администратор
                                 option(value="Operator", checked) Оператор
+                                option(value="Administrator") Администратор
+                                
                     p
                         button(type="submit", class="btn my-link-confirm my-form-link") Редактировать пользователя
 
